@@ -1,0 +1,12 @@
+{
+  "functions": {
+    "api/campaigns.js": {
+      "memory": 128,
+      "maxDuration": 10
+    }
+  },
+  "rewrites": [
+    { "source": "/api/campaigns", "destination": "/api/campaigns" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
