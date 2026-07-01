@@ -636,15 +636,15 @@
     "sessionId": "3srdv9wrbykmr17fhky"
   },
   {
-    "url": "https://www.strivepharmacy.com/sessions?utm_source=email_quarterly_pulse&utm_content=pdf&utm_term=newsletter",
+    "url": "https://www.strivepharmacy.com/sessions?utm_source=email_quarterly_pulse&utm_medium=email&utm_content=pdf&utm_term=newsletter",
     "source": "email_quarterly_pulse",
-    "medium": "",
+    "medium": "email",
     "campaign": "",
     "campaignUtm": "",
     "format": "pdf",
     "placement": "newsletter",
     "creative": "",
-    "savedAt": "2026-07-01T20:11:58.154Z",
+    "savedAt": "2026-07-01T20:12:08.654Z",
     "sessionId": "ztvbgy7fgbhmr2ftpbm"
   }
 ]
