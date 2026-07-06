@@ -225,11 +225,12 @@ function updateCampSearch(val) {
 
 function setCampaign(id) {
   const c = app.campaigns.find(x => x.id === id);
-  app.form.campaignId  = id;
+  app.form.campaignId   = id;
   app.form.campaignUtm  = c ? (c.utmCampaign || '') : '';
   app.form.campaignName = c ? c.name : '';
   app.campSearch = '';
-  renderView();
+  renderCampaignBlock();
+  updatePreviewInline();
 }
 
 function setFormText(k, val) {
@@ -338,6 +339,7 @@ async function loadCampaigns() {
     app.campStatus = 'error'; app.campError = e.message;
   }
   renderView();
+  renderCampaignBlock();
 }
 
 async function loadSavedLinks() {
@@ -383,45 +385,74 @@ async function deleteLink(idx) {
   } catch(e) { toast('Delete failed'); }
 }
 
+// ─── Campaign block — standalone DOM update, never re-renders input ─────────────
+function renderCampaignBlock() {
+  const el = document.getElementById('campaign-block');
+  if (!el) return;
+  const f = app.form;
+
+  if (app.campStatus === 'idle') {
+    el.innerHTML = `<button class="btn btn-sm" onclick="loadCampaigns()">Load campaigns from HubSpot</button>`;
+    return;
+  }
+  if (app.campStatus === 'loading') {
+    el.innerHTML = `<div class="loading-row"><span class="spinner"></span> Loading…</div>`;
+    return;
+  }
+  if (app.campStatus === 'error') {
+    el.innerHTML = `<p style="font-size:12px;color:#c0392b">${app.campError}</p>`;
+    return;
+  }
+
+  // Show refresh button
+  const rb = document.getElementById('camp-refresh-btn');
+  if (rb) rb.style.display = '';
+
+  const selected = f.campaignId ? app.campaigns.find(c => c.id === f.campaignId) : null;
+
+  if (selected) {
+    el.innerHTML = `
+      <div class="camp-selected">
+        <div class="camp-selected-name">${selected.name.replace(/</g,'&lt;')}</div>
+        <div class="hint" style="margin-top:2px">utm_campaign → ${(selected.utmCampaign||'').replace(/</g,'&lt;')}</div>
+        <button class="btn btn-sm" style="margin-top:6px;font-size:11px" onclick="clearCampaign()">Change campaign</button>
+      </div>`;
+    return;
+  }
+
+  // Search UI — rendered once, then updated via updateCampSearch
+  if (!el.querySelector('#camp-search-input')) {
+    el.innerHTML = `
+      <div class="camp-search-wrap">
+        <div style="position:relative;margin-bottom:6px">
+          <input type="text"
+            id="camp-search-input"
+            placeholder="Search campaigns…"
+            autocomplete="off"
+            oninput="updateCampSearch(this.value)"
+            style="padding-left:32px"
+          />
+          <svg viewBox="0 0 24 24" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--text-3);stroke-width:2;fill:none;pointer-events:none"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </div>
+        <div class="camp-list" id="camp-results-list"></div>
+      </div>`;
+  }
+
+  // Always refresh the list contents without touching the input
+  updateCampSearch(app.campSearch);
+}
+
+function clearCampaign() {
+  app.form.campaignId = '';
+  app.form.campaignUtm = '';
+  app.form.campaignName = '';
+  app.campSearch = '';
+  renderCampaignBlock();
+}
+
 // ─── Render: Builder ──────────────────────────────────────────────────────────
 function renderForm() {
   const f = app.form; const S = sources(); const M = mediums();
-  const campBlock = () => {
-    if (app.campStatus === 'idle')    return `<button class="btn btn-sm" onclick="loadCampaigns()">Load campaigns from HubSpot</button>`;
-    if (app.campStatus === 'loading') return `<div class="loading-row"><span class="spinner"></span> Loading…</div>`;
-    if (app.campStatus === 'error')   return `<p style="font-size:12px;color:#c0392b">${h(app.campError)}</p>`;
-    const q = app.campSearch.toLowerCase();
-    const filtered = q
-      ? app.campaigns.filter(c => c.name.toLowerCase().includes(q))
-      : app.campaigns.slice(0, 50);
-    const selected = f.campaignId ? app.campaigns.find(c => c.id === f.campaignId) : null;
-    return `<div class="camp-search-wrap">
-      <div style="position:relative;margin-bottom:6px">
-        <input type="text"
-          placeholder="Search campaigns…"
-          value="${h(app.campSearch)}"
-          oninput="app.campSearch=this.value;renderView()"
-          style="padding-left:32px"
-        />
-        <svg viewBox="0 0 24 24" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--text-3);stroke-width:2;fill:none;pointer-events:none"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      </div>
-      ${selected ? `
-        <div class="camp-selected">
-          <div class="camp-selected-name">${h(selected.name)}</div>
-          <div class="hint" style="margin-top:2px">utm_campaign → ${h(selected.utmCampaign)}</div>
-          <button class="btn btn-sm" style="margin-top:6px;font-size:11px" onclick="app.form.campaignId='';app.form.campaignUtm='';app.form.campaignName='';app.campSearch='';renderView()">Clear</button>
-        </div>` : `
-        <div class="camp-list" id="camp-results-list">
-          ${!filtered.length ? `<div style="padding:10px;font-size:12px;color:var(--text-3)">No campaigns found</div>` :
-            filtered.map(c => `
-              <div class="camp-item${f.campaignId===c.id?' selected':''}" onclick="setCampaign('${h(c.id)}')">
-                <div class="camp-item-name">${h(c.name)}</div>
-                <div class="camp-item-utm">${h(c.utmCampaign)}</div>
-              </div>`).join('')}
-          ${!q ? `<div style="padding:8px 10px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border)">Showing ${Math.min(50,app.campaigns.length)} of ${app.campaigns.length} — search to find more</div>` : ''}
-        </div>`}
-    </div>`;
-  };
   const saveStatusHTML = () => {
     if (app.saveStatus==='saving') return `<div class="url-saving"><span class="spinner"></span> Saving…</div>`;
     if (app.saveStatus==='saved')  return `<div class="url-saving saved"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg> Saved to team links</div>`;
@@ -452,12 +483,12 @@ function renderForm() {
         </div>
       </div>
     </div>
-    <div class="card">
+    <div class="card" id="campaign-card">
       <div class="card-header">
         <div class="card-title">Campaign</div>
-        ${app.campStatus==='loaded'?`<button class="btn btn-sm" onclick="loadCampaigns()">Refresh</button>`:''}
+        <button class="btn btn-sm" id="camp-refresh-btn" style="display:none" onclick="loadCampaigns()">Refresh</button>
       </div>
-      ${campBlock()}
+      <div id="campaign-block"></div>
     </div>
     <div class="card">
       <div class="card-header"><div class="card-title">Creative</div></div>
@@ -627,8 +658,12 @@ function checkPwd() {
 }
 
 function renderView() {
-  if (app.view==='public') document.getElementById('view-public').innerHTML = renderForm();
-  else document.getElementById('view-admin').innerHTML = renderAdmin();
+  if (app.view==='public') {
+    document.getElementById('view-public').innerHTML = renderForm();
+    renderCampaignBlock();
+  } else {
+    document.getElementById('view-admin').innerHTML = renderAdmin();
+  }
 }
 
 renderView();
