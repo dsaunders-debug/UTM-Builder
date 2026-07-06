@@ -679,13 +679,11 @@ function populateSelects() {
 function handleCreativeName(input) {
   const pos = input.selectionStart;
   const raw = input.value;
-  // Replace spaces with underscores, strip anything that's not alphanumeric/underscore/hyphen/dot
-  const clean = raw.replace(/ /g, '_').replace(/[^a-zA-Z0-9._\-]/g, '');
+  // Only replace spaces with underscores — allow all other characters freely
+  const clean = raw.replace(/ /g, '_');
   if (clean !== raw) {
     input.value = clean;
-    // Restore cursor position (may shift if chars were removed before cursor)
-    const removed = raw.slice(0, pos).replace(/ /g, '_').replace(/[^a-zA-Z0-9._\-]/g, '').length;
-    input.setSelectionRange(removed, removed);
+    input.setSelectionRange(pos, pos);
   }
   form.creativeName = clean;
 }
@@ -699,12 +697,13 @@ async function loadCampaigns() {
     const res = await fetch(WORKER + '/api/campaigns');
     if (!res.ok) throw new Error('Failed');
     const data = await res.json();
-    allCampaigns = (data.campaigns || []).map(c => ({
-      name: c.name || c.hs_name || c.slug || c.id,
-      slug: (c.slug || c.hs_utm || c.name || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''),
-      tag: 'Active',
-      raw: c,
-    })).filter(c => c.name && c.slug);
+    allCampaigns = (data.campaigns || []).map(c => {
+      // The Worker returns campaigns with hs_name (display name) and hs_utm (the actual utm_campaign value)
+      // Preserve the raw hs_utm value exactly as HubSpot has it — never sanitize it
+      const name    = c.hs_name || c.name || c.id || '';
+      const utmVal  = c.hs_utm  || c.name || c.id || '';  // raw utm_campaign value
+      return { name, utmVal };
+    }).filter(c => c.name);
     renderCampaignList(allCampaigns);
   } catch(e) {
     document.getElementById('camp-list').innerHTML = '<div class="camp-empty">Could not load campaigns. Check Worker logs.</div>';
@@ -720,23 +719,22 @@ function renderCampaignList(list) {
   }
   el.innerHTML = '';
   list.forEach(c => {
-    const tagClass = c.tag === 'Paused' ? 'paused' : c.tag === 'Draft' ? 'draft' : 'active';
     const btn = document.createElement('button');
-    btn.className = 'camp-item' + (form.campaign === c.slug ? ' selected' : '');
-    btn.dataset.slug = c.slug;
+    btn.className = 'camp-item' + (form.campaign === c.utmVal ? ' selected' : '');
+    btn.dataset.utm = c.utmVal;
     btn.innerHTML = `
       <span>
         <div class="camp-item-name">${escHtml(c.name)}</div>
-        <div class="camp-item-slug">${escHtml(c.slug)}</div>
+        <div class="camp-item-slug">${escHtml(c.utmVal)}</div>
       </span>
-      <span class="camp-tag ${tagClass}">${escHtml(c.tag)}</span>`;
-    btn.onclick = () => selectCampaign(c.slug, btn);
+      <span class="camp-tag active">Active</span>`;
+    btn.onclick = () => selectCampaign(c.utmVal, btn);
     el.appendChild(btn);
   });
 }
 
-function selectCampaign(slug, btn) {
-  form.campaign = slug;
+function selectCampaign(utmVal, btn) {
+  form.campaign = utmVal;  // store the exact HubSpot utm value
   document.querySelectorAll('.camp-item').forEach(b => b.classList.remove('selected'));
   if (btn) btn.classList.add('selected');
 }
@@ -745,7 +743,7 @@ function filterCampaigns(q) {
   const trimmed = q.trim().toLowerCase();
   if (!trimmed) { renderCampaignList(allCampaigns); return; }
   const filtered = allCampaigns.filter(c =>
-    c.name.toLowerCase().includes(trimmed) || c.slug.toLowerCase().includes(trimmed)
+    c.name.toLowerCase().includes(trimmed) || c.utmVal.toLowerCase().includes(trimmed)
   );
   renderCampaignList(filtered);
 }
@@ -771,7 +769,7 @@ function buildUTM() {
 }
 
 function sanitize(s) {
-  return s.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9._\-]/g, '');
+  return s.trim().replace(/\s+/g, '_');
 }
 
 async function generateUTM() {
