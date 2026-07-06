@@ -697,13 +697,11 @@ async function loadCampaigns() {
     const res = await fetch(WORKER + '/api/campaigns');
     if (!res.ok) throw new Error('Failed');
     const data = await res.json();
-    allCampaigns = (data.campaigns || []).map(c => {
-      // The Worker returns campaigns with hs_name (display name) and hs_utm (the actual utm_campaign value)
-      // Preserve the raw hs_utm value exactly as HubSpot has it — never sanitize it
-      const name    = c.hs_name || c.name || c.id || '';
-      const utmVal  = c.hs_utm  || c.name || c.id || '';  // raw utm_campaign value
-      return { name, utmVal };
-    }).filter(c => c.name);
+    // Worker returns: { campaigns: [{ id, name, utmCampaign }] }
+    allCampaigns = (data.campaigns || []).map(c => ({
+      name:     c.name        || c.id || '',
+      utmVal:   c.utmCampaign || c.name || c.id || '',
+    })).filter(c => c.name);
     renderCampaignList(allCampaigns);
   } catch(e) {
     document.getElementById('camp-list').innerHTML = '<div class="camp-empty">Could not load campaigns. Check Worker logs.</div>';
