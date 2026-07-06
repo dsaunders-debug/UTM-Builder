@@ -105,6 +105,18 @@
   .config-group-title { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-3); margin-bottom: 10px; }
   .info-box { background: var(--green-light); border: 1px solid rgba(29,158,117,0.2); border-radius: var(--radius-lg); padding: 14px 16px; margin-top: 16px; font-size: 12px; color: var(--green-dark); line-height: 1.6; }
   .info-box code { font-family: var(--mono); font-size: 11px; background: rgba(29,158,117,0.12); padding: 1px 5px; border-radius: 4px; }
+
+  /* Campaign search */
+  .camp-search-wrap { display: flex; flex-direction: column; gap: 0; }
+  .camp-list { border: 1px solid var(--border-med); border-radius: var(--radius); overflow: hidden; max-height: 220px; overflow-y: auto; background: var(--surface); }
+  .camp-item { padding: 9px 12px; cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.1s; }
+  .camp-item:last-child { border-bottom: none; }
+  .camp-item:hover { background: var(--surface-2); }
+  .camp-item.selected { background: var(--green-light); }
+  .camp-item-name { font-size: 13px; color: var(--text); font-weight: 500; }
+  .camp-item-utm { font-size: 10px; font-family: var(--mono); color: var(--text-3); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .camp-selected { background: var(--green-light); border: 1px solid rgba(29,158,117,0.25); border-radius: var(--radius); padding: 10px 12px; }
+  .camp-selected-name { font-size: 13px; font-weight: 500; color: var(--green-dark); }
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinner { width: 14px; height: 14px; border: 2px solid var(--border-med); border-top-color: var(--green); border-radius: 50%; animation: spin 0.7s linear infinite; display: inline-block; vertical-align: middle; }
   .loading-row { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-3); }
@@ -157,7 +169,7 @@ const setAdminPwd = v  => localStorage.setItem('strive_admin_pwd', v);
 let app = {
   view: 'public', adminAuthed: false, adminTab: 'links',
   form: { url:'', source:'', medium:'', campaignId:'', campaignUtm:'', campaignName:'', format:'', placement:'', creative:'' },
-  campaigns: [], campStatus: 'idle', campError: '',
+  campaigns: [], campStatus: 'idle', campError: '', campSearch: '',
   generatedUrl: null, saveStatus: 'idle',
   savedLinks: [], savedLinksStatus: 'idle'
 };
@@ -188,6 +200,35 @@ function setForm(k, val) {
     app.form.campaignUtm  = c ? (c.utmCampaign || '') : '';
     app.form.campaignName = c ? c.name : '';
   }
+  renderView();
+}
+
+function updateCampSearch(val) {
+  app.campSearch = val;
+  const q = val.toLowerCase();
+  const filtered = q
+    ? app.campaigns.filter(c => c.name.toLowerCase().includes(q))
+    : app.campaigns.slice(0, 50);
+  const listEl = document.getElementById('camp-results-list');
+  if (!listEl) return;
+  if (!filtered.length) {
+    listEl.innerHTML = `<div style="padding:10px;font-size:12px;color:var(--text-3)">No campaigns found</div>`;
+    return;
+  }
+  listEl.innerHTML = filtered.map(c => `
+    <div class="camp-item${app.form.campaignId===c.id?' selected':''}" onclick="setCampaign('${c.id.replace(/'/g,"\\'")}')">
+      <div class="camp-item-name">${c.name.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <div class="camp-item-utm">${(c.utmCampaign||'').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+    </div>`).join('') +
+    (!q ? `<div style="padding:8px 10px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border)">Showing ${Math.min(50,app.campaigns.length)} of ${app.campaigns.length} — search to find more</div>` : '');
+}
+
+function setCampaign(id) {
+  const c = app.campaigns.find(x => x.id === id);
+  app.form.campaignId  = id;
+  app.form.campaignUtm  = c ? (c.utmCampaign || '') : '';
+  app.form.campaignName = c ? c.name : '';
+  app.campSearch = '';
   renderView();
 }
 
@@ -349,12 +390,36 @@ function renderForm() {
     if (app.campStatus === 'idle')    return `<button class="btn btn-sm" onclick="loadCampaigns()">Load campaigns from HubSpot</button>`;
     if (app.campStatus === 'loading') return `<div class="loading-row"><span class="spinner"></span> Loading…</div>`;
     if (app.campStatus === 'error')   return `<p style="font-size:12px;color:#c0392b">${h(app.campError)}</p>`;
-    return `<div class="field">
-      <select onchange="setForm('campaignId',this.value)">
-        <option value="">Select campaign…</option>
-        ${app.campaigns.map(c=>`<option value="${h(c.id)}"${f.campaignId===c.id?' selected':''}>${h(c.name)}</option>`).join('')}
-      </select>
-      ${f.campaignUtm?`<div class="hint">utm_campaign → ${h(f.campaignUtm)}</div>`:''}
+    const q = app.campSearch.toLowerCase();
+    const filtered = q
+      ? app.campaigns.filter(c => c.name.toLowerCase().includes(q))
+      : app.campaigns.slice(0, 50);
+    const selected = f.campaignId ? app.campaigns.find(c => c.id === f.campaignId) : null;
+    return `<div class="camp-search-wrap">
+      <div style="position:relative;margin-bottom:6px">
+        <input type="text"
+          placeholder="Search campaigns…"
+          value="${h(app.campSearch)}"
+          oninput="app.campSearch=this.value;renderView()"
+          style="padding-left:32px"
+        />
+        <svg viewBox="0 0 24 24" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;stroke:var(--text-3);stroke-width:2;fill:none;pointer-events:none"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      </div>
+      ${selected ? `
+        <div class="camp-selected">
+          <div class="camp-selected-name">${h(selected.name)}</div>
+          <div class="hint" style="margin-top:2px">utm_campaign → ${h(selected.utmCampaign)}</div>
+          <button class="btn btn-sm" style="margin-top:6px;font-size:11px" onclick="app.form.campaignId='';app.form.campaignUtm='';app.form.campaignName='';app.campSearch='';renderView()">Clear</button>
+        </div>` : `
+        <div class="camp-list" id="camp-results-list">
+          ${!filtered.length ? `<div style="padding:10px;font-size:12px;color:var(--text-3)">No campaigns found</div>` :
+            filtered.map(c => `
+              <div class="camp-item${f.campaignId===c.id?' selected':''}" onclick="setCampaign('${h(c.id)}')">
+                <div class="camp-item-name">${h(c.name)}</div>
+                <div class="camp-item-utm">${h(c.utmCampaign)}</div>
+              </div>`).join('')}
+          ${!q ? `<div style="padding:8px 10px;font-size:11px;color:var(--text-3);border-top:1px solid var(--border)">Showing ${Math.min(50,app.campaigns.length)} of ${app.campaigns.length} — search to find more</div>` : ''}
+        </div>`}
     </div>`;
   };
   const saveStatusHTML = () => {
