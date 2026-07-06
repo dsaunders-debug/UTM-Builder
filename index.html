@@ -753,17 +753,25 @@ function buildUTM() {
   let base = form.baseUrl.trim();
   if (!base) return null;
   if (!/^https?:\/\//i.test(base)) base = 'https://' + base;
-  const p = new URLSearchParams();
-  if (form.source)   p.set('utm_source',   form.source);
-  if (form.medium)   p.set('utm_medium',   form.medium);
-  if (form.campaign) p.set('utm_campaign', form.campaign);
 
-  // utm_content = format-placement-creativename
+  const p = new URLSearchParams();
+  if (form.source) p.set('utm_source', form.source);
+  if (form.medium) p.set('utm_medium', form.medium);
+  // NOTE: utm_campaign is intentionally left out of URLSearchParams —
+  // we append it raw below so the exact HubSpot value passes through untouched.
+
   const parts = [form.format, form.placement, sanitize(form.creativeName)].filter(Boolean);
   if (parts.length) p.set('utm_content', parts.join('-'));
 
   const sep = base.includes('?') ? '&' : '?';
-  return base + sep + p.toString();
+  let url = base + sep + p.toString();
+
+  // Append the raw, unmodified HubSpot utm_campaign value
+  if (form.campaign) {
+    url += '&utm_campaign=' + form.campaign;
+  }
+
+  return url;
 }
 
 function sanitize(s) {
