@@ -732,7 +732,8 @@ function renderCampaignList(list) {
 }
 
 function selectCampaign(utmVal, campName, btn) {
-  form.campaign = utmVal;  // store the exact HubSpot utm value
+  form.campaign = utmVal;
+  form.campaignName = campName;   // ← this line is missing in your current file
   document.querySelectorAll('.camp-item').forEach(b => b.classList.remove('selected'));
   if (btn) btn.classList.add('selected');
 }
