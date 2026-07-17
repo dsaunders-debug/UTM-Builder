@@ -865,17 +865,6 @@ function showURLBox(url) {
   });
 
   box.dataset.url = url;
-   let shortLinkEl = document.getElementById('short-link-display');
-  if (!shortLinkEl) {
-    shortLinkEl = document.createElement('div');
-    shortLinkEl.id = 'short-link-display';
-    shortLinkEl.style.marginTop = '12px';
-    shortLinkEl.style.fontSize = '13px';
-    shortLinkEl.style.color = 'var(--strive-navy)';
-    document.querySelector('.url-section').appendChild(shortLinkEl);
-  }
-  const shortUrl = WORKER + '/r/' + getSessionKey();
-  shortLinkEl.innerHTML = `Trackable short link: <a href="#" onclick="navigator.clipboard.writeText('${shortUrl}'); toast('Short link copied!'); return false;" style="color:var(--strive-blue);font-weight:600;">${shortUrl}</a>`;
 }
 
 function copyUrl() {
@@ -895,16 +884,7 @@ function copyUrl() {
 //  ADMIN — load data
 // ═══════════════════════════════════════════════════════════════
 async function loadAdminData() {
-  let clickCounts = {};
-  try {
-    const clicksRes = await fetch(WORKER + '/api/clicks');
-    if (clicksRes.ok) {
-      const clicksData = await clicksRes.json();
-      clickCounts = clicksData.counts || {};
-    }
-  } catch(e) { /* silent */ }
-  window.clickCounts = clickCounts;
-
+  // Team links
   try {
     const res = await fetch(WORKER + '/api/save');
     if (res.ok) {
@@ -915,6 +895,7 @@ async function loadAdminData() {
   } catch(e) {
     document.getElementById('team-links-table').innerHTML = '<div class="table-empty">Could not load links.</div>';
   }
+  // Sources & mediums clouds
   renderSourcesCloud();
   renderMediumsCloud();
 }
@@ -932,15 +913,14 @@ function renderTeamLinks() {
     .map((lnk, originalIdx) => ({ lnk, originalIdx }))
     .sort((a, b) => new Date(b.lnk.savedAt || 0) - new Date(a.lnk.savedAt || 0));
 
- ordered.forEach(({ lnk, originalIdx }) => {
+  ordered.forEach(({ lnk, originalIdx }) => {
     const row = document.createElement('div');
     row.className = 'data-row';
     const displayUrl = lnk.url || '';
     const label = lnk.campaignName || lnk.campaign || lnk.source || 'Tagged URL';
-    const clicks = (window.clickCounts && lnk.sessionKey && window.clickCounts[lnk.sessionKey]) || 0;
     row.innerHTML = `
       <div>
-        <div class="data-row-main">${escHtml(label)} <span style="font-weight:400;opacity:0.6;font-size:13px;">· ${clicks} click${clicks === 1 ? '' : 's'}</span></div>
+        <div class="data-row-main">${escHtml(label)}</div>
         <div class="data-row-sub">${escHtml(displayUrl.slice(0, 80))}${displayUrl.length > 80 ? '…' : ''}</div>
       </div>
       <div class="data-row-actions">
@@ -1093,4 +1073,3 @@ function escHtml(s) {
 </script>
 </body>
 </html>
-
