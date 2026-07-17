@@ -726,7 +726,7 @@ function renderCampaignList(list) {
         <div class="camp-item-slug">${escHtml(c.utmVal)}</div>
       </span>
       <span class="camp-tag active">Active</span>`;
-    btn.onclick = () => selectCampaign(c.utmVal, btn);
+    btn.onclick = () => selectCampaign(c.utmVal, c.name, btn);
     el.appendChild(btn);
   });
 }
@@ -791,11 +791,12 @@ async function generateUTM() {
 
   // Save to GitHub silently
   try {
-    const payload = {
-      url, source: form.source, medium: form.medium,
-      campaign: form.campaign, content: buildContent(),
-      baseUrl: form.baseUrl, ts: Date.now(), sessionKey: getSessionKey()
-    };
+   const payload = {
+  url, source: form.source, medium: form.medium,
+  campaign: form.campaign, campaignName: form.campaignName,
+  content: buildContent(),
+  baseUrl: form.baseUrl, ts: Date.now(), sessionKey: getSessionKey()
+};
     const res = await fetch(WORKER + '/api/save', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
@@ -905,7 +906,7 @@ function renderTeamLinks() {
     const row = document.createElement('div');
     row.className = 'data-row';
     const displayUrl = lnk.url || '';
-    const label = lnk.campaign || lnk.source || 'Tagged URL';
+    const label = lnk.campaignName || lnk.campaign || lnk.source || 'Tagged URL';
     row.innerHTML = `
       <div>
         <div class="data-row-main">${escHtml(label)}</div>
