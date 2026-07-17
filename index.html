@@ -895,7 +895,13 @@ function renderTeamLinks() {
     return;
   }
   el.innerHTML = '';
-  [...savedLinks].reverse().forEach((lnk, idx) => {
+
+  // Pair each link with its original index, then sort newest-first
+  const ordered = savedLinks
+    .map((lnk, originalIdx) => ({ lnk, originalIdx }))
+    .sort((a, b) => new Date(b.lnk.savedAt || 0) - new Date(a.lnk.savedAt || 0));
+
+  ordered.forEach(({ lnk, originalIdx }) => {
     const row = document.createElement('div');
     row.className = 'data-row';
     const displayUrl = lnk.url || '';
@@ -906,13 +912,12 @@ function renderTeamLinks() {
         <div class="data-row-sub">${escHtml(displayUrl.slice(0, 80))}${displayUrl.length > 80 ? '…' : ''}</div>
       </div>
       <div class="data-row-actions">
-        <button class="btn btn--ghost btn--sm" onclick="copyLinkAt(${savedLinks.length - 1 - idx})">Copy</button>
-        <button class="btn btn--sm" style="color:var(--red);border-color:var(--red);" onclick="deleteLink(${savedLinks.length - 1 - idx})">Delete</button>
+        <button class="btn btn--ghost btn--sm" onclick="copyLinkAt(${originalIdx})">Copy</button>
+        <button class="btn btn--sm" style="color:var(--red);border-color:var(--red);" onclick="deleteLink(${originalIdx})">Delete</button>
       </div>`;
     el.appendChild(row);
   });
 }
-
 function copyLinkAt(realIdx) {
   const url = savedLinks[realIdx]?.url;
   if (url) { try { navigator.clipboard && navigator.clipboard.writeText(url); } catch(e) {} toast('Copied!'); }
