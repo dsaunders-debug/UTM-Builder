@@ -602,28 +602,42 @@ function setFormField(key, val) {
 // ═══════════════════════════════════════════════════════════════
 //  SOURCES / MEDIUMS — locked lists loaded from Worker
 // ═══════════════════════════════════════════════════════════════
-const SOURCES = [
+const DEFAULT_SOURCES = [
   'paid_social','organic_social','paid_search','organic_search','display',
   'gaggleamp','partnersite','cold_outreach','relationship_outreach','print',
   'print_magazine_ad','presenter_slide','email_marketing','email_quarterly_pulse',
   'email_current_newsletter','email_product_update','email_critical_information',
   'email_events','jconnelly_pr'
 ];
-const MEDIUMS = [
+const DEFAULT_MEDIUMS = [
   'linkedin','facebook','instagram','twitter','pinterest','reddit','medium',
   'youtube','tiktok','gaggleamp','partnersite','google','bing','yahoo','email',
   'sales_team','sponsored_event','gbp','dwd','endpoint_news','aarp','intouch','cnbc'
 ];
 
+let adminSources = [...DEFAULT_SOURCES];
+let adminMediums = [...DEFAULT_MEDIUMS];
 // ═══════════════════════════════════════════════════════════════
 //  CUSTOM DROPDOWNS
 // ═══════════════════════════════════════════════════════════════
 const DD_OPTIONS = {
-  source: SOURCES,
-  medium: MEDIUMS,
+  source: adminSources,
+  medium: adminMediums,
   format: ['video','image','carousel','story','reel','banner','text','email','pdf','infographic'],
   placement: ['feed','story','reels','search','display','inbox','newsletter','sidebar','pre-roll','homepage'],
 };
+async function loadTags() {
+  try {
+    const res = await fetch(WORKER + '/api/tags');
+    if (res.ok) {
+      const data = await res.json();
+      adminSources = (data.sources && data.sources.length) ? data.sources : [...DEFAULT_SOURCES];
+      adminMediums = (data.mediums && data.mediums.length) ? data.mediums : [...DEFAULT_MEDIUMS];
+    }
+  } catch(e) { /* fall back to defaults already set */ }
+  buildDD('source', adminSources);
+  buildDD('medium', adminMediums);
+}
 
 function buildDD(id, options) {
   const menu = document.getElementById('dd-' + id + '-menu');
@@ -662,11 +676,8 @@ function selectDD(id, val) {
 }
 
 function populateSelects() {
-  buildDD('source', DD_OPTIONS.source);
-  buildDD('medium', DD_OPTIONS.medium);
   buildDD('format', DD_OPTIONS.format);
   buildDD('placement', DD_OPTIONS.placement);
-  // Close dropdowns on outside click
   document.addEventListener('click', e => {
     if (!e.target.closest('.dd-wrap')) {
       document.querySelectorAll('.dd-trigger.open').forEach(t => t.classList.remove('open'));
@@ -674,7 +685,6 @@ function populateSelects() {
     }
   });
 }
-
 // ── Creative name: spaces → underscores, strip invalid chars ──
 function handleCreativeName(input) {
   const pos = input.selectionStart;
@@ -955,8 +965,6 @@ function exportCSV() {
 // ═══════════════════════════════════════════════════════════════
 //  SOURCES & MEDIUMS (admin display only — selects use locked list)
 // ═══════════════════════════════════════════════════════════════
-let adminSources = [...SOURCES];
-let adminMediums = [...MEDIUMS];
 
 function renderSourcesCloud() {
   const el = document.getElementById('sources-cloud');
@@ -980,6 +988,15 @@ function renderMediumsCloud() {
   });
 }
 
+async function saveTags() {
+  try {
+    await fetch(WORKER + '/api/tags', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sources: adminSources, mediums: adminMediums })
+    });
+  } catch(e) { toast('Could not save tags'); }
+}
+
 function addTag(type) {
   const inp = document.getElementById('new-' + type);
   const val = inp.value.trim().toLowerCase().replace(/\s+/g, '_');
@@ -988,17 +1005,27 @@ function addTag(type) {
     adminSources.push(val);
     renderSourcesCloud();
     buildDD('source', adminSources);
+    saveTags();
   } else if (type === 'medium' && !adminMediums.includes(val)) {
     adminMediums.push(val);
     renderMediumsCloud();
     buildDD('medium', adminMediums);
+    saveTags();
   }
   inp.value = '';
 }
 
 function removeTag(type, val) {
-  if (type === 'source') { adminSources = adminSources.filter(s => s !== val); renderSourcesCloud(); buildDD('source', adminSources); }
-  else                   { adminMediums = adminMediums.filter(m => m !== val); renderMediumsCloud(); buildDD('medium', adminMediums); }
+  if (type === 'source') {
+    adminSources = adminSources.filter(s => s !== val);
+    renderSourcesCloud();
+    buildDD('source', adminSources);
+  } else {
+    adminMediums = adminMediums.filter(m => m !== val);
+    renderMediumsCloud();
+    buildDD('medium', adminMediums);
+  }
+  saveTags();
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1040,8 +1067,10 @@ function escHtml(s) {
 // ═══════════════════════════════════════════════════════════════
 (function init() {
   populateSelects();
+  loadTags();
   loadCampaigns();
 })();
 </script>
 </body>
 </html>
+
