@@ -731,7 +731,7 @@ function renderCampaignList(list) {
   });
 }
 
-function selectCampaign(utmVal, btn) {
+function selectCampaign(utmVal, campName, btn) {
   form.campaign = utmVal;  // store the exact HubSpot utm value
   document.querySelectorAll('.camp-item').forEach(b => b.classList.remove('selected'));
   if (btn) btn.classList.add('selected');
