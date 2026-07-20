@@ -340,9 +340,21 @@ header {
       <span class="card-num">01/</span>
       <h2 class="card-title">Base URL</h2>
     </div>
-    <div class="field">
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button type="button" class="btn btn--sm" id="mode-single-btn" onclick="setBuildMode('single')" style="background:var(--strive-blue);color:var(--off-white);border-color:var(--strive-blue);">Single</button>
+      <button type="button" class="btn btn--ghost btn--sm" id="mode-batch-btn" onclick="setBuildMode('batch')">Batch</button>
+    </div>
+    <div class="field" id="single-url-field">
       <label for="base-url">Destination</label>
       <input class="utm-input" type="url" id="base-url" placeholder="https://www.strivepharmacy.com/…" oninput="setFormField('baseUrl', this.value)" />
+    </div>
+    <div class="field" id="batch-url-field" hidden>
+      <label>Destinations</label>
+      <div id="batch-url-rows"></div>
+      <button type="button" class="btn btn--ghost btn--sm" onclick="addBatchUrlRow()" style="margin-top:4px;align-self:flex-start;">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Add link
+      </button>
     </div>
   </section>
 
@@ -434,6 +446,7 @@ header {
   </section>
 
   <!-- Generated URL -->
+  <!-- Generated URL -->
   <section class="url-section">
     <div class="url-header">
       <span class="url-label">Your tagged URL</span>
@@ -450,6 +463,15 @@ header {
       </div>
       <div class="url-params" id="url-params" style="display:none;"></div>
     </button>
+  </section>
+
+  <!-- Batch Results -->
+  <section class="url-section" id="batch-results-section" hidden>
+    <div class="url-header">
+      <span class="url-label">Generated links</span>
+      <span class="url-status idle" id="batch-status"></span>
+    </div>
+    <div class="data-table" id="batch-results-table"></div>
   </section>
 
 </main>
@@ -564,6 +586,50 @@ const form = {
 let allCampaigns = []; // { name, slug, tag }
 let savedLinks   = []; // from GitHub
 let sessionKey   = null; // for session-based overwrite
+let buildMode = 'single'; // 'single' | 'batch'
+let batchRowCount = 0;
+
+function setBuildMode(mode) {
+  buildMode = mode;
+  document.getElementById('single-url-field').hidden = mode !== 'single';
+  document.getElementById('batch-url-field').hidden = mode !== 'batch';
+  document.getElementById('mode-single-btn').className = mode === 'single' ? 'btn btn--sm' : 'btn btn--ghost btn--sm';
+  document.getElementById('mode-single-btn').style.cssText = mode === 'single' ? 'background:var(--strive-blue);color:var(--off-white);border-color:var(--strive-blue);' : '';
+  document.getElementById('mode-batch-btn').className = mode === 'batch' ? 'btn btn--sm' : 'btn btn--ghost btn--sm';
+  document.getElementById('mode-batch-btn').style.cssText = mode === 'batch' ? 'background:var(--strive-blue);color:var(--off-white);border-color:var(--strive-blue);' : '';
+  document.getElementById('batch-results-section').hidden = mode !== 'batch';
+
+  if (mode === 'batch' && document.querySelectorAll('#batch-url-rows > div').length === 0) {
+    addBatchUrlRow();
+  }
+}
+
+function addBatchUrlRow(prefill = '') {
+  batchRowCount++;
+  const id = 'batch-row-' + batchRowCount;
+  const container = document.getElementById('batch-url-rows');
+  const row = document.createElement('div');
+  row.id = id;
+  row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
+  row.innerHTML = `
+    <input class="utm-input batch-url-input" type="url" placeholder="https://www.strivepharmacy.com/…" value="${escHtml(prefill)}" style="flex:1;" />
+    <button type="button" class="btn btn--ghost btn--icon" onclick="removeBatchUrlRow('${id}')" title="Remove">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 2.5l9 9M11.5 2.5l-9 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+    </button>`;
+  container.appendChild(row);
+}
+
+function removeBatchUrlRow(id) {
+  const rows = document.querySelectorAll('#batch-url-rows > div');
+  if (rows.length <= 1) { toast('At least one link is required.'); return; }
+  document.getElementById(id)?.remove();
+}
+
+function getBatchUrls() {
+  return Array.from(document.querySelectorAll('.batch-url-input'))
+    .map(i => i.value.trim())
+    .filter(Boolean);
+}
 
 // ═══════════════════════════════════════════════════════════════
 //  VIEW SWITCHING
@@ -789,14 +855,76 @@ function sanitize(s) {
 }
 
 async function generateUTM() {
+  if (buildMode === 'batch') { return generateBatchUTMs(); }
+
   const url = buildUTM();
   if (!url) { toast('Please fill in a destination URL.'); return; }
+  const btn = document.getElementById('generate-btn');
+  const spinner = document.getElementById('gen-spinner');
+  btn.disabled = true;
+  spinner.classList.add('visible');
+
+async function generateBatchUTMs() {
+  const urls = getBatchUrls();
+  if (!urls.length) { toast('Add at least one URL.'); return; }
 
   const btn = document.getElementById('generate-btn');
   const spinner = document.getElementById('gen-spinner');
   btn.disabled = true;
   spinner.classList.add('visible');
 
+  const statusEl = document.getElementById('batch-status');
+  const resultsSection = document.getElementById('batch-results-section');
+  const table = document.getElementById('batch-results-table');
+  resultsSection.hidden = false;
+  table.innerHTML = '';
+
+  const results = [];
+
+  for (let i = 0; i < urls.length; i++) {
+    statusEl.textContent = `Generating ${i + 1} of ${urls.length}…`;
+    let base = urls[i];
+    if (!/^https?:\/\//i.test(base)) base = 'https://' + base;
+
+    const p = new URLSearchParams();
+    if (form.source) p.set('utm_source', form.source);
+    if (form.medium) p.set('utm_medium', form.medium);
+    const parts = [form.format, form.placement, sanitize(form.creativeName)].filter(Boolean);
+    if (parts.length) p.set('utm_content', parts.join('-'));
+    const sep = base.includes('?') ? '&' : '?';
+    let url = base + sep + p.toString();
+    if (form.campaign) url += '&utm_campaign=' + form.campaign;
+
+    results.push(url);
+
+    try {
+      const payload = {
+        url, source: form.source, medium: form.medium,
+        campaign: form.campaign, campaignName: form.campaignName,
+        content: buildContent(),
+        baseUrl: base, ts: Date.now() + i, sessionKey: Math.random().toString(36).slice(2)
+      };
+      await fetch(WORKER + '/api/save', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch(e) { /* continue even if one save fails */ }
+  }
+
+  statusEl.textContent = `${urls.length} link${urls.length === 1 ? '' : 's'} generated & saved`;
+  table.innerHTML = results.map((u) => `
+    <div class="data-row">
+      <div style="min-width:0;">
+        <div class="data-row-sub" style="word-break:break-all;">${escHtml(u)}</div>
+      </div>
+      <div class="data-row-actions">
+        <button class="btn btn--ghost btn--sm" onclick="navigator.clipboard.writeText('${u.replace(/'/g, "\\'")}'); toast('Copied!');">Copy</button>
+      </div>
+    </div>`).join('');
+
+  btn.disabled = false;
+  spinner.classList.remove('visible');
+}
   // Display immediately
   showURLBox(url);
 
