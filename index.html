@@ -859,10 +859,36 @@ async function generateUTM() {
 
   const url = buildUTM();
   if (!url) { toast('Please fill in a destination URL.'); return; }
+
   const btn = document.getElementById('generate-btn');
   const spinner = document.getElementById('gen-spinner');
   btn.disabled = true;
   spinner.classList.add('visible');
+
+  // Display immediately
+  showURLBox(url);
+
+  // Save to GitHub silently
+  try {
+    const payload = {
+      url, source: form.source, medium: form.medium,
+      campaign: form.campaign, campaignName: form.campaignName,
+      content: buildContent(),
+      baseUrl: form.baseUrl, ts: Date.now(), sessionKey: getSessionKey()
+    };
+    const res = await fetch(WORKER + '/api/save', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (res.ok) {
+      const d = await res.json();
+      if (d.sessionKey) sessionKey = d.sessionKey;
+    }
+  } catch(e) { /* silent */ }
+
+  btn.disabled = false;
+  spinner.classList.remove('visible');
+}
 
 async function generateBatchUTMs() {
   const urls = getBatchUrls();
@@ -921,30 +947,6 @@ async function generateBatchUTMs() {
         <button class="btn btn--ghost btn--sm" onclick="navigator.clipboard.writeText('${u.replace(/'/g, "\\'")}'); toast('Copied!');">Copy</button>
       </div>
     </div>`).join('');
-
-  btn.disabled = false;
-  spinner.classList.remove('visible');
-}
-  // Display immediately
-  showURLBox(url);
-
-  // Save to GitHub silently
-  try {
-   const payload = {
-  url, source: form.source, medium: form.medium,
-  campaign: form.campaign, campaignName: form.campaignName,
-  content: buildContent(),
-  baseUrl: form.baseUrl, ts: Date.now(), sessionKey: getSessionKey()
-};
-    const res = await fetch(WORKER + '/api/save', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-    if (res.ok) {
-      const d = await res.json();
-      if (d.sessionKey) sessionKey = d.sessionKey;
-    }
-  } catch(e) { /* silent */ }
 
   btn.disabled = false;
   spinner.classList.remove('visible');
