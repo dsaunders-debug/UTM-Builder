@@ -355,6 +355,23 @@ header {
   </div>
 </div>
 
+<div id="admin-gate-overlay" style="position:fixed;inset:0;z-index:998;background:rgba(20,40,80,0.45);display:none;align-items:center;justify-content:center;padding:24px;">
+  <div class="login-card">
+    <div class="login-eyebrow">Restricted</div>
+    <h1 class="login-title" style="font-size:28px;">Admin access</h1>
+    <p style="font-size:13px;color:var(--strive-navy);opacity:0.65;margin-top:-14px;margin-bottom:20px;">Enter the admin password to manage links, tags, and accounts.</p>
+    <div class="login-field">
+      <label for="admin-gate-password">Admin password</label>
+      <input class="utm-input" type="password" id="admin-gate-password" autocomplete="off" />
+    </div>
+    <div class="login-error" id="admin-gate-error"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn--blue" style="flex:1;" onclick="submitAdminGate()">Unlock</button>
+      <button class="btn btn--ghost" style="flex:1;" onclick="cancelAdminGate()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="hdr-brand">
     <div class="hdr-logo">
@@ -769,11 +786,17 @@ async function apiFetch(path, options) {
   options = options || {};
   const headers = Object.assign({}, options.headers || {});
   if (authState && authState.token) headers['Authorization'] = 'Bearer ' + authState.token;
+  const adminAuth = getAdminAuth();
+  if (adminAuth) headers['X-Admin-Token'] = adminAuth.adminToken;
   const res = await fetch(WORKER + path, Object.assign({}, options, { headers }));
   if (res.status === 401) {
     clearAuthState();
     toast('Your session expired - please sign in again.');
     showLoginOverlay();
+  }
+  if (res.status === 403) {
+    clearAdminAuth();
+    toast('Admin access expired - unlock again.');
   }
   return res;
 }
@@ -877,6 +900,12 @@ async function submitPasswordStep() {
 
 function logout() {
   clearAuthState();
+  clearAdminAuth();
+  // If they were on the Admin view, put the UI back on Builder for next sign-in
+  document.getElementById('view-builder').hidden = false;
+  document.getElementById('view-admin').hidden = true;
+  document.getElementById('btn-builder').classList.add('active');
+  document.getElementById('btn-admin').classList.remove('active');
   showLoginOverlay();
 }
 
@@ -888,12 +917,73 @@ document.addEventListener('keydown', (e) => {
 });
 
 function showView(v) {
+  if (v === 'admin' && !getAdminAuth()) {
+    openAdminGate();
+    return;
+  }
   document.getElementById('view-builder').hidden = v !== 'builder';
   document.getElementById('view-admin').hidden   = v !== 'admin';
   document.getElementById('btn-builder').classList.toggle('active', v === 'builder');
   document.getElementById('btn-admin').classList.toggle('active', v === 'admin');
   if (v === 'admin') loadAdminData();
 }
+
+// ── Admin gate ──
+const ADMIN_KEY = 'utmAdminAuth';
+
+function getAdminAuth() {
+  try {
+    const raw = localStorage.getItem(ADMIN_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed.adminToken || !parsed.adminExpiresAt || Date.now() > parsed.adminExpiresAt) {
+      localStorage.removeItem(ADMIN_KEY);
+      return null;
+    }
+    return parsed;
+  } catch (e) { return null; }
+}
+
+function clearAdminAuth() {
+  localStorage.removeItem(ADMIN_KEY);
+}
+
+function openAdminGate() {
+  document.getElementById('admin-gate-password').value = '';
+  document.getElementById('admin-gate-error').textContent = '';
+  document.getElementById('admin-gate-overlay').style.display = 'flex';
+  setTimeout(() => document.getElementById('admin-gate-password').focus(), 50);
+}
+
+function cancelAdminGate() {
+  document.getElementById('admin-gate-overlay').style.display = 'none';
+}
+
+async function submitAdminGate() {
+  const password = document.getElementById('admin-gate-password').value;
+  const errEl = document.getElementById('admin-gate-error');
+  errEl.textContent = '';
+  if (!password) { errEl.textContent = 'Enter the admin password.'; return; }
+  try {
+    const res = await apiFetch('/api/admin/check', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { errEl.textContent = data.error || 'Incorrect admin password.'; return; }
+    localStorage.setItem(ADMIN_KEY, JSON.stringify({ adminToken: data.adminToken, adminExpiresAt: data.adminExpiresAt }));
+    document.getElementById('admin-gate-overlay').style.display = 'none';
+    showView('admin');
+  } catch (e) {
+    errEl.textContent = 'Could not reach the server.';
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && document.getElementById('admin-gate-overlay').style.display === 'flex') {
+    submitAdminGate();
+  }
+});
 
 function showAdminTab(t) {
   ['team','sources','settings'].forEach(id => {
