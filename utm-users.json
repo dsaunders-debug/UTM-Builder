@@ -4,6 +4,11 @@
       "email": "dsaunders@strivepharmacy.com",
       "passwordHash": "9bf899831bffb2d4652921bdd965fa976ddb467e1a690ff41599f87db81179f2",
       "createdAt": "2026-07-24T19:22:01.778Z"
+    },
+    {
+      "email": "cstone@strivepharmacy.com",
+      "passwordHash": "022739c231292cdfc2f55a678ebf342ccdb3cb9963147a822c50e3f1f077ecbe",
+      "createdAt": "2026-07-24T19:33:47.497Z"
     }
   ]
 }
