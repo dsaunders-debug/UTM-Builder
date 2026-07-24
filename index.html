@@ -640,7 +640,37 @@ async function showView(v) {
   document.getElementById('view-admin').hidden   = v !== 'admin';
   document.getElementById('btn-builder').classList.toggle('active', v === 'builder');
   document.getElementById('btn-admin').classList.toggle('active', v === 'admin');
+
   if (v === 'admin') {
+    const status = await getAdminStatus();
+
+    // First-ever login: no password set yet — force setup
+    if (!status.configured) {
+      const newPw = prompt('No admin password has been set yet.\nCreate one now (min 6 characters):');
+      if (!newPw) { showView('builder'); return; }
+      if (newPw.length < 6) {
+        alert('Password must be at least 6 characters.');
+        showView('builder');
+        return;
+      }
+      const confirmPw = prompt('Confirm your new password:');
+      if (newPw !== confirmPw) {
+        alert('Passwords did not match. Please try again.');
+        showView('builder');
+        return;
+      }
+      const ok = await setAdminPassword(newPw);
+      if (!ok) {
+        alert('Could not save password — check your connection and try again.');
+        showView('builder');
+        return;
+      }
+      toast('Password created ✓');
+      loadAdminData();
+      return;
+    }
+
+    // Normal login: password already exists
     const entered = prompt('Admin password:');
     if (entered === null) { showView('builder'); return; }
     const ok = await checkAdminPassword(entered);
@@ -650,6 +680,28 @@ async function showView(v) {
       return;
     }
     loadAdminData();
+  }
+}
+
+async function getAdminStatus() {
+  try {
+    const res = await fetch(WORKER + '/api/settings');
+    if (!res.ok) return { configured: true }; // fail-safe: require a password rather than skip auth
+    return await res.json();
+  } catch (e) {
+    return { configured: true };
+  }
+}
+
+async function setAdminPassword(pw) {
+  try {
+    const res = await fetch(WORKER + '/api/settings', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pw })
+    });
+    return res.ok;
+  } catch (e) {
+    return false;
   }
 }
 
