@@ -421,6 +421,23 @@ header {
   </div>
   <div class="loading-bar" id="loading-bar"><div class="loading-bar-fill"></div></div>
 
+  <section class="card" id="presets-card">
+    <div class="card-hdr" style="margin-bottom:14px;">
+      <span class="card-num">MINE</span>
+      <h2 class="card-title">My presets</h2>
+    </div>
+    <p style="font-size:13px;color:var(--strive-navy);opacity:0.6;margin-bottom:14px;">Only you can see these. Set up the fields below, then save the combo here for one-click reuse.</p>
+    <div class="tags-cloud" id="presets-cloud" style="margin-bottom:12px;min-height:0;">
+      <span style="font-size:13px;opacity:0.5;">Loading presets...</span>
+    </div>
+    <div class="tag-add">
+      <input type="text" id="new-preset-name" placeholder="Name this setup (e.g. LinkedIn organic)..." maxlength="60" onkeydown="if(event.key==='Enter')savePreset()" />
+      <button onclick="savePreset()" title="Save current fields as a preset">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="#FCFAFA" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </section>
+
   <section class="card">
     <div class="card-hdr">
       <span class="card-num">01/</span>
@@ -583,8 +600,25 @@ header {
         </button>
       </div>
     </div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <input class="utm-input" type="text" id="link-filter-q" placeholder="Search links..." style="flex:2;min-width:180px;height:44px;font-size:14px;" oninput="setLinkFilter('q', this.value)" />
+      <select class="utm-input" id="link-filter-source" style="flex:1;min-width:140px;height:44px;font-size:14px;cursor:pointer;" onchange="setLinkFilter('source', this.value)">
+        <option value="">All sources</option>
+      </select>
+      <select class="utm-input" id="link-filter-creator" style="flex:1;min-width:160px;height:44px;font-size:14px;cursor:pointer;" onchange="setLinkFilter('creator', this.value)">
+        <option value="">All creators</option>
+      </select>
+    </div>
     <div class="data-table" id="team-links-table">
       <div class="table-empty">Loading saved links...</div>
+    </div>
+    <div id="links-pagination" style="display:flex;align-items:center;justify-content:space-between;margin-top:14px;">
+      <span style="font-size:13px;color:var(--strive-navy);opacity:0.6;" id="links-count"></span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn--ghost btn--sm" id="links-prev" onclick="changeLinkPage(-1)">Prev</button>
+        <span style="font-size:13px;color:var(--strive-navy);opacity:0.7;" id="links-page-label"></span>
+        <button class="btn btn--ghost btn--sm" id="links-next" onclick="changeLinkPage(1)">Next</button>
+      </div>
     </div>
   </div>
 
@@ -892,6 +926,7 @@ async function submitPasswordStep() {
     resetLoginForm();
     loadTags();
     loadCampaigns();
+    loadPresets();
     toast('Welcome, ' + data.email + '!');
   } catch (e) {
     errEl.textContent = 'Could not reach the server.';
@@ -1181,6 +1216,7 @@ async function generateUTM() {
       url, source: form.source, medium: form.medium,
       campaign: form.campaign, campaignName: form.campaignName,
       content: buildContent(),
+      createdBy: authState ? authState.email : '',
       baseUrl: form.baseUrl, ts: Date.now(), sessionKey: getSessionKey()
     };
     const res = await apiFetch('/api/save', {
@@ -1235,6 +1271,7 @@ async function generateBatchUTMs() {
         url, source: form.source, medium: form.medium,
         campaign: form.campaign, campaignName: form.campaignName,
         content: buildContent(),
+        createdBy: authState ? authState.email : '',
         baseUrl: base, ts: Date.now() + i, sessionKey: Math.random().toString(36).slice(2)
       };
       await apiFetch('/api/save', {
@@ -1318,6 +1355,7 @@ async function loadAdminData() {
     if (res.ok) {
       const data = await res.json();
       savedLinks = data.links || [];
+      populateLinkFilterOptions();
       renderTeamLinks();
     }
   } catch(e) {
@@ -1339,30 +1377,100 @@ function prettyCampaignLabel(lnk) {
   return lnk.source || 'Tagged URL';
 }
 
+// ── Team links: filters + pagination ──
+const LINKS_PER_PAGE = 25;
+let linkFilters = { q: '', source: '', creator: '' };
+let linkPage = 1;
+
+function setLinkFilter(key, val) {
+  linkFilters[key] = (val || '').trim().toLowerCase();
+  linkPage = 1;
+  renderTeamLinks();
+}
+
+function changeLinkPage(delta) {
+  linkPage += delta;
+  renderTeamLinks();
+}
+
+function populateLinkFilterOptions() {
+  const sources = [...new Set(savedLinks.map(l => (l.source || '').trim()).filter(Boolean))].sort();
+  const creators = [...new Set(savedLinks.map(l => (l.createdBy || '').trim()).filter(Boolean))].sort();
+  const srcSel = document.getElementById('link-filter-source');
+  const crSel = document.getElementById('link-filter-creator');
+  const keepSrc = linkFilters.source, keepCr = linkFilters.creator;
+  srcSel.innerHTML = '<option value="">All sources</option>' + sources.map(s => '<option value="' + escHtml(s) + '">' + escHtml(s) + '</option>').join('');
+  crSel.innerHTML = '<option value="">All creators</option>' + creators.map(c => '<option value="' + escHtml(c) + '">' + escHtml(c) + '</option>').join('');
+  srcSel.value = keepSrc && sources.map(s=>s.toLowerCase()).includes(keepSrc) ? sources.find(s=>s.toLowerCase()===keepSrc) : '';
+  crSel.value = keepCr && creators.map(c=>c.toLowerCase()).includes(keepCr) ? creators.find(c=>c.toLowerCase()===keepCr) : '';
+}
+
+function getFilteredLinks() {
+  const q = linkFilters.q;
+  return savedLinks
+    .map((lnk, originalIdx) => ({ lnk, originalIdx }))
+    .filter(({ lnk }) => {
+      if (linkFilters.source && (lnk.source || '').toLowerCase() !== linkFilters.source) return false;
+      if (linkFilters.creator && (lnk.createdBy || '').toLowerCase() !== linkFilters.creator) return false;
+      if (q) {
+        const hay = [lnk.url, lnk.campaignName, lnk.campaign, lnk.source, lnk.medium, lnk.content, lnk.createdBy]
+          .map(v => (v || '').toString().toLowerCase()).join(' ');
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => new Date(b.lnk.savedAt || 0) - new Date(a.lnk.savedAt || 0));
+}
+
 function renderTeamLinks() {
   const el = document.getElementById('team-links-table');
   if (!savedLinks.length) {
     el.innerHTML = '<div class="table-empty">No saved links yet. Generate some from the Builder!</div>';
+    document.getElementById('links-count').textContent = '';
+    document.getElementById('links-page-label').textContent = '';
+    document.getElementById('links-prev').disabled = true;
+    document.getElementById('links-next').disabled = true;
     updateBulkDeleteUI();
     return;
   }
+
+  const filtered = getFilteredLinks();
+  const totalPages = Math.max(1, Math.ceil(filtered.length / LINKS_PER_PAGE));
+  if (linkPage > totalPages) linkPage = totalPages;
+  if (linkPage < 1) linkPage = 1;
+  const start = (linkPage - 1) * LINKS_PER_PAGE;
+  const pageItems = filtered.slice(start, start + LINKS_PER_PAGE);
+
+  document.getElementById('links-count').textContent =
+    filtered.length + ' link' + (filtered.length === 1 ? '' : 's') +
+    (filtered.length !== savedLinks.length ? ' (of ' + savedLinks.length + ')' : '');
+  document.getElementById('links-page-label').textContent = 'Page ' + linkPage + ' of ' + totalPages;
+  document.getElementById('links-prev').disabled = linkPage <= 1;
+  document.getElementById('links-next').disabled = linkPage >= totalPages;
+
+  if (!filtered.length) {
+    el.innerHTML = '<div class="table-empty">No links match your filters.</div>';
+    updateBulkDeleteUI();
+    return;
+  }
+
   el.innerHTML = '';
-
-  const ordered = savedLinks
-    .map((lnk, originalIdx) => ({ lnk, originalIdx }))
-    .sort((a, b) => new Date(b.lnk.savedAt || 0) - new Date(a.lnk.savedAt || 0));
-
-  ordered.forEach(({ lnk, originalIdx }) => {
+  pageItems.forEach(({ lnk, originalIdx }) => {
     const row = document.createElement('div');
     row.className = 'data-row';
     const displayUrl = lnk.url || '';
     const label = prettyCampaignLabel(lnk);
     const isChecked = selectedForDelete.has(lnk.ts);
+    const metaParts = [];
+    if (lnk.createdBy) metaParts.push(escHtml(lnk.createdBy));
+    if (lnk.savedAt) metaParts.push(new Date(lnk.savedAt).toLocaleDateString());
+    const metaLine = metaParts.length ? '<div class="data-row-sub" style="opacity:0.45;">' + metaParts.join(' · ') + '</div>' : '';
     row.innerHTML =
       '<div style="display:flex;align-items:center;gap:14px;min-width:0;">' +
       '<input type="checkbox" ' + (isChecked ? 'checked' : '') + ' onchange="toggleSelectLink(' + lnk.ts + ', this.checked)" style="flex-shrink:0;width:16px;height:16px;cursor:pointer;" />' +
       '<div style="min-width:0;"><div class="data-row-main">' + escHtml(label) + '</div>' +
-      '<div class="data-row-sub">' + escHtml(displayUrl.slice(0, 80)) + (displayUrl.length > 80 ? '...' : '') + '</div></div></div>' +
+      '<div class="data-row-sub">' + escHtml(displayUrl.slice(0, 80)) + (displayUrl.length > 80 ? '...' : '') + '</div>' +
+      metaLine + '</div></div>' +
       '<div class="data-row-actions">' +
       '<button class="btn btn--ghost btn--sm" onclick="copyLinkAt(' + originalIdx + ')">Copy</button>' +
       '<button class="btn btn--sm" style="color:var(--red);border-color:var(--red);" onclick="deleteLink(' + originalIdx + ')">Delete</button></div>';
@@ -1433,9 +1541,10 @@ async function deleteLink(realIdx) {
 }
 
 function exportCSV() {
-  if (!savedLinks.length) { toast('No links to export'); return; }
-  const cols = ['url','source','medium','campaign','content','baseUrl','ts'];
-  const rows = [cols.join(','), ...savedLinks.map(l =>
+  const filtered = getFilteredLinks().map(f => f.lnk);
+  if (!filtered.length) { toast('No links to export'); return; }
+  const cols = ['url','source','medium','campaign','campaignName','content','createdBy','baseUrl','savedAt','ts'];
+  const rows = [cols.join(','), ...filtered.map(l =>
     cols.map(c => '"' + (l[c] || '').toString().replace(/"/g, '""') + '"').join(',')
   )];
   const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
@@ -1443,6 +1552,7 @@ function exportCSV() {
   a.href = URL.createObjectURL(blob);
   a.download = 'strive-utm-links.csv';
   a.click();
+  if (filtered.length !== savedLinks.length) toast('Exported ' + filtered.length + ' filtered links');
 }
 
 function renderSourcesCloud() {
@@ -1568,6 +1678,116 @@ async function deleteUser(email) {
     toast('Account removed');
     loadUsers();
   } catch (e) { toast('Could not remove account'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MY PRESETS — per-user saved field combos (scoped server-side)
+// ═══════════════════════════════════════════════════════════════
+let myPresets = [];
+
+async function loadPresets() {
+  const cloud = document.getElementById('presets-cloud');
+  try {
+    const res = await apiFetch('/api/presets');
+    if (!res.ok) throw new Error('failed');
+    const data = await res.json();
+    myPresets = data.presets || [];
+    renderPresets();
+  } catch (e) {
+    cloud.innerHTML = '<span style="font-size:13px;opacity:0.5;">Could not load presets.</span>';
+  }
+}
+
+function renderPresets() {
+  const cloud = document.getElementById('presets-cloud');
+  if (!myPresets.length) {
+    cloud.innerHTML = '<span style="font-size:13px;opacity:0.5;">No presets yet - save your first one below.</span>';
+    return;
+  }
+  cloud.innerHTML = '';
+  myPresets.forEach(p => {
+    const chip = document.createElement('span');
+    chip.className = 'tag-chip';
+    chip.style.cursor = 'pointer';
+    chip.title = presetSummary(p);
+    const nameSpan = document.createElement('span');
+    nameSpan.textContent = p.name;
+    nameSpan.onclick = () => applyPreset(p.id);
+    const delBtn = document.createElement('button');
+    delBtn.title = 'Delete preset';
+    delBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    delBtn.onclick = (e) => { e.stopPropagation(); deletePreset(p.id, p.name); };
+    chip.appendChild(nameSpan);
+    chip.appendChild(delBtn);
+    cloud.appendChild(chip);
+  });
+}
+
+function presetSummary(p) {
+  const f = p.fields || {};
+  return [f.source, f.medium, f.campaignName || f.campaign, f.format, f.placement]
+    .filter(Boolean).join(' / ') || 'Empty preset';
+}
+
+async function savePreset() {
+  const nameInput = document.getElementById('new-preset-name');
+  const name = nameInput.value.trim();
+  if (!name) { toast('Give your preset a name'); return; }
+
+  const fields = {
+    source: form.source, medium: form.medium,
+    format: form.format, placement: form.placement,
+    campaign: form.campaign, campaignName: form.campaignName || ''
+  };
+  if (!fields.source && !fields.medium && !fields.format && !fields.placement && !fields.campaign) {
+    toast('Pick at least one field below before saving a preset');
+    return;
+  }
+
+  try {
+    const res = await apiFetch('/api/presets', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, fields })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { toast(data.error || 'Could not save preset'); return; }
+    myPresets = data.presets || [];
+    renderPresets();
+    nameInput.value = '';
+    toast('Preset "' + name + '" saved');
+  } catch (e) { toast('Could not save preset'); }
+}
+
+function applyPreset(id) {
+  const p = myPresets.find(x => x.id === id);
+  if (!p) return;
+  const f = p.fields || {};
+  if (f.source) selectDD('source', f.source);
+  if (f.medium) selectDD('medium', f.medium);
+  if (f.format) selectDD('format', f.format);
+  if (f.placement) selectDD('placement', f.placement);
+  if (f.campaign) {
+    form.campaign = f.campaign;
+    form.campaignName = f.campaignName || '';
+    document.querySelectorAll('.camp-item').forEach(b =>
+      b.classList.toggle('selected', b.dataset.utm === f.campaign));
+  }
+  toast('Preset "' + p.name + '" applied');
+}
+
+async function deletePreset(id, name) {
+  if (!confirm('Delete preset "' + name + '"?')) return;
+  try {
+    const res = await apiFetch('/api/presets', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', id })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { toast(data.error || 'Could not delete preset'); return; }
+    myPresets = data.presets || [];
+    renderPresets();
+    toast('Preset deleted');
+  } catch (e) { toast('Could not delete preset'); }
 }
 
 function showLoading(v) {
@@ -1890,6 +2110,7 @@ function celebrate(intensity) {
     hideLoginOverlay();
     loadTags();
     loadCampaigns();
+    loadPresets();
   } else {
     showLoginOverlay();
   }
