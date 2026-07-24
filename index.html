@@ -5,9 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Strive UTM Builder</title>
 <style>
-/* ============================================================
-   Strive Pharmacy — Design Tokens
-   ============================================================ */
 :root {
   --strive-blue:     #1E64F0;
   --strive-navy:     #142850;
@@ -29,8 +26,6 @@
   --r-sm: 8px;
   --ease-out: cubic-bezier(.22, 1, .36, 1);
   --dur-fast: 180ms;
-
-  /* Status colors */
   --green: #059669;
   --green-light: #D1FAE5;
   --amber: #D97706;
@@ -38,8 +33,6 @@
   --red: #DC2626;
   --red-light: #FEE2E2;
 }
-
-/* ── Reset ── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
   background: var(--paper);
@@ -59,8 +52,6 @@ input:focus, select:focus { outline: none; border-color: var(--strive-blue) !imp
 input, select, textarea { transition: border-color var(--dur-fast) var(--ease-out); }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-thumb { background: var(--strive-blue-300); border-radius: 8px; }
-
-/* ── Btn ── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   padding: 18px 28px; border-radius: var(--r-sm);
@@ -75,8 +66,6 @@ input, select, textarea { transition: border-color var(--dur-fast) var(--ease-ou
 .btn--ghost:hover { border-color: var(--strive-blue); }
 .btn--sm { padding: 11px 20px; font-size: 13px; }
 .btn--icon { width: 44px; height: 44px; padding: 0; }
-
-/* ── Header ── */
 header {
   position: sticky; top: 0; z-index: 20;
   display: flex; align-items: center; justify-content: space-between;
@@ -88,6 +77,8 @@ header {
 .hdr-logo svg { height: 24px; width: auto; }
 .hdr-divider { width: 1px; height: 24px; background: var(--strive-blue-300); }
 .hdr-label { font-weight: 600; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--strive-blue); }
+.hdr-right { display: flex; align-items: center; gap: 18px; }
+.hdr-user { font-size: 12px; letter-spacing: -0.01em; color: var(--strive-navy); opacity: 0.6; }
 .view-toggle { display: flex; align-items: center; background: var(--strive-blue-100); border-radius: var(--r-sm); padding: 4px; gap: 4px; }
 .view-btn {
   border: none; cursor: pointer; padding: 8px 20px; border-radius: 6px;
@@ -96,19 +87,13 @@ header {
 }
 .view-btn.active { background: var(--off-white); color: var(--strive-blue); }
 .view-btn:not(.active) { background: transparent; opacity: 0.55; }
-
-/* ── Main containers ── */
 .builder-main { max-width: 860px; margin: 0 auto; padding: 52px 24px 80px; }
 .admin-main   { max-width: 920px; margin: 0 auto; padding: 52px 24px 80px; }
-
-/* ── Page hero ── */
 .page-hero { margin-bottom: 40px; }
 .page-eyebrow { font-weight: 600; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--strive-blue); margin-bottom: 14px; }
 .page-title { font-family: var(--font-display); font-weight: 300; font-size: 56px; line-height: 1.04; letter-spacing: -0.02em; color: var(--strive-blue); }
 .page-title em { font-style: italic; }
 .page-sub { margin-top: 14px; font-size: 18px; line-height: 1.3; letter-spacing: -0.02em; color: var(--strive-navy); max-width: 500px; }
-
-/* ── Cards ── */
 .card {
   background: var(--off-white); border: 1px solid var(--strive-blue-300);
   border-radius: var(--r-md); padding: 28px 32px; margin-bottom: 16px;
@@ -116,8 +101,6 @@ header {
 .card-hdr { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
 .card-num { font-weight: 600; font-size: 13px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--strive-blue-300); }
 .card-title { font-weight: 700; font-size: 22px; letter-spacing: -0.03em; color: var(--strive-blue); }
-
-/* ── Custom Dropdowns ── */
 .dd-wrap { position: relative; user-select: none; }
 .dd-trigger {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -150,19 +133,14 @@ header {
 .dd-option.selected { background: var(--strive-blue-100); font-weight: 600; }
 .dd-option-check { opacity: 0; }
 .dd-option.selected .dd-option-check { opacity: 1; }
-
-/* ── Field ── */
 .field { display: flex; flex-direction: column; gap: 8px; }
 .field label { font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--strive-navy); }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-
 .utm-input {
   width: 100%; height: 52px; padding: 0 16px;
   background: var(--off-white); border: 1px solid var(--strive-blue-300); border-radius: var(--r-sm);
   font-size: 17px; letter-spacing: -0.02em; color: var(--strive-blue);
 }
-
-/* ── Campaign search ── */
 .camp-search-wrap { position: relative; margin-bottom: 12px; }
 .camp-search-wrap svg { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); pointer-events: none; }
 .camp-search-wrap input { padding-left: 46px; }
@@ -188,8 +166,6 @@ header {
 .camp-tag.draft    { background: var(--strive-blue-100); color: var(--strive-blue); }
 .camp-item.selected .camp-tag { background: var(--strive-blue); color: var(--off-white); }
 .camp-empty { padding: 20px 18px; color: var(--strive-navy); opacity: 0.5; font-size: 14px; }
-
-/* ── URL output box ── */
 .url-section { margin-top: 4px; margin-bottom: 4px; }
 .url-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .url-label { font-weight: 600; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--strive-blue); }
@@ -219,13 +195,9 @@ header {
   padding: 7px 12px; font-size: 13px; letter-spacing: -0.01em;
 }
 .url-param span { opacity: 0.6; }
-
-/* ── Spinner ── */
 .spinner { display: none; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner.visible { display: inline-block; }
-
-/* ── Admin ── */
 .admin-tabs { display: flex; gap: 8px; border-bottom: 1px solid var(--strive-blue-300); margin-bottom: 28px; }
 .admin-tab {
   border: none; background: transparent; cursor: pointer; padding: 14px 6px; margin-bottom: -1px;
@@ -233,15 +205,12 @@ header {
 }
 .admin-tab.active   { color: var(--strive-blue); border-bottom: 2px solid var(--strive-blue); }
 .admin-tab:not(.active) { color: var(--strive-navy); opacity: 0.5; border-bottom: 2px solid transparent; }
-
 .data-table { background: var(--off-white); border: 1px solid var(--strive-blue-300); border-radius: var(--r-md); overflow: hidden; }
 .data-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 22px; border-bottom: 1px solid var(--strive-blue-100); }
 .data-row:last-child { border-bottom: none; }
 .data-row-main { font-weight: 600; font-size: 15px; letter-spacing: -0.02em; color: var(--strive-blue); }
 .data-row-sub  { font-size: 13px; letter-spacing: -0.01em; color: var(--strive-navy); opacity: 0.6; margin-top: 3px; }
 .data-row-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
-
-/* Sources & mediums */
 .s-m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .tags-cloud { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; min-height: 40px; }
 .tag-chip {
@@ -254,30 +223,65 @@ header {
 .tag-add { display: flex; gap: 8px; }
 .tag-add input { flex: 1; height: 44px; padding: 0 14px; background: var(--off-white); border: 1px solid var(--strive-blue-300); border-radius: var(--r-sm); font-size: 14px; color: var(--strive-blue); }
 .tag-add button { width: 44px; height: 44px; border-radius: var(--r-sm); background: var(--strive-blue); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-/* Settings toggles */
 .settings-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 24px; border-bottom: 1px solid var(--strive-blue-100); }
 .settings-row:last-child { border-bottom: none; }
 .toggle { flex-shrink: 0; width: 46px; height: 26px; border-radius: 20px; padding: 3px; display: flex; cursor: pointer; border: none; transition: all var(--dur-fast); }
 .toggle.on  { background: var(--strive-blue); justify-content: flex-end; }
 .toggle.off { background: var(--strive-blue-300); justify-content: flex-start; }
 .toggle-knob { width: 20px; height: 20px; border-radius: 50%; background: var(--off-white); }
-
-/* Owner badge */
 .owner-badge { background: var(--strive-blue-100); color: var(--strive-blue); border-radius: var(--r-sm); padding: 6px 12px; font-weight: 600; font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; }
-
-/* CSV / loading states */
 .table-empty { padding: 32px 24px; text-align: center; color: var(--strive-navy); opacity: 0.5; font-size: 15px; }
 .toast { position: fixed; bottom: 28px; right: 28px; background: var(--strive-navy); color: var(--off-white); padding: 14px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; opacity: 0; transform: translateY(12px); transition: all 0.3s var(--ease-out); pointer-events: none; z-index: 100; }
 .toast.show { opacity: 1; transform: translateY(0); }
-
-/* Loader */
 .loading-bar { height: 3px; background: var(--strive-blue-100); border-radius: 99px; overflow: hidden; margin-bottom: 20px; display: none; }
 .loading-bar.visible { display: block; }
 .loading-bar-fill { height: 100%; width: 40%; background: var(--strive-blue); border-radius: 99px; animation: loadbar 1.2s ease-in-out infinite; }
 @keyframes loadbar { 0% { transform: translateX(-100%); } 100% { transform: translateX(350%); } }
+#login-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--paper);
+  display: none; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.login-card {
+  width: 100%; max-width: 380px;
+  background: var(--off-white); border: 1px solid var(--strive-blue-300);
+  border-radius: var(--r-md); padding: 36px 32px;
+}
+.login-eyebrow { font-weight: 600; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--strive-blue); margin-bottom: 10px; }
+.login-title { font-family: var(--font-display); font-weight: 300; font-size: 32px; letter-spacing: -0.02em; color: var(--strive-blue); margin-bottom: 24px; }
+.login-field { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+.login-field label { font-weight: 600; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--strive-navy); }
+.login-error { font-size: 13px; color: var(--red); min-height: 18px; margin-bottom: 8px; }
+.login-hint { font-size: 12px; color: var(--strive-navy); opacity: 0.55; margin-top: 16px; line-height: 1.5; }
 
-/* Responsive */
+/* ── User menu ── */
+.user-menu { position: relative; }
+.user-menu-dropdown {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 60;
+  background: var(--off-white); border: 1px solid var(--strive-blue-300); border-radius: var(--r-sm);
+  min-width: 210px; box-shadow: 0 8px 24px rgba(30,100,240,0.14); overflow: hidden;
+}
+.user-menu-email {
+  padding: 12px 16px; font-size: 12px; color: var(--strive-navy); opacity: 0.6;
+  border-bottom: 1px solid var(--strive-blue-100); word-break: break-all;
+}
+.user-menu-item {
+  display: block; width: 100%; text-align: left; background: none; border: none; cursor: pointer;
+  padding: 12px 16px; font-size: 14px; color: var(--strive-blue); font-weight: 500;
+  border-bottom: 1px solid var(--strive-blue-100);
+}
+.user-menu-item:last-child { border-bottom: none; }
+.user-menu-item:hover { background: var(--strive-blue-100); }
+
+/* ── Change password modal ── */
+#change-password-overlay {
+  position: fixed; inset: 0; z-index: 998;
+  background: rgba(20,40,80,0.45);
+  display: none; align-items: center; justify-content: center;
+  padding: 24px;
+}
+
 @media (max-width: 640px) {
   header { padding: 0 20px; }
   .builder-main, .admin-main { padding: 36px 16px 60px; }
@@ -286,15 +290,71 @@ header {
   .grid-2 { grid-template-columns: 1fr; gap: 12px; }
   .s-m-grid { grid-template-columns: 1fr; }
   .url-box { padding: 20px 20px; }
+  .hdr-user { display: none; }
 }
-
-/* Hidden */
 [hidden] { display: none !important; }
 </style>
 </head>
 <body>
 
-<!-- ── Header ── -->
+<div id="login-overlay">
+  <div class="login-card">
+    <div class="login-eyebrow">Strive · UTM Builder</div>
+    <h1 class="login-title" id="login-mode-title">Sign in</h1>
+    <p style="font-size:13px;color:var(--strive-navy);opacity:0.65;margin-top:-14px;margin-bottom:20px;">Username is your Strive email.</p>
+
+    <div id="login-step-email">
+      <div class="login-field">
+        <label for="login-email">Email</label>
+        <input class="utm-input" type="email" id="login-email" autocomplete="username" placeholder="you@strivepharmacy.com" />
+      </div>
+      <div class="login-error" id="login-email-error"></div>
+      <button class="btn btn--blue" style="width:100%;" onclick="submitEmailStep()">Continue</button>
+    </div>
+
+    <div id="login-step-password" hidden>
+      <p class="login-hint" id="login-password-hint" style="margin-top:0;margin-bottom:16px;"></p>
+      <div class="login-field">
+        <label for="login-password" id="login-password-label">Password</label>
+        <input class="utm-input" type="password" id="login-password" autocomplete="current-password" placeholder="********" />
+      </div>
+      <div class="login-field" id="login-confirm-field" hidden>
+        <label for="login-confirm-password">Confirm password</label>
+        <input class="utm-input" type="password" id="login-confirm-password" placeholder="********" />
+      </div>
+      <div class="login-error" id="login-error"></div>
+      <button class="btn btn--blue" id="login-submit-btn" style="width:100%;margin-bottom:10px;" onclick="submitPasswordStep()">Sign in</button>
+      <button class="btn btn--ghost btn--sm" style="width:100%;" onclick="backToEmailStep()">Use a different email</button>
+    </div>
+
+    <p class="login-hint">Your sign-in is remembered on this device for 90 days.</p>
+  </div>
+</div>
+
+<div id="change-password-overlay">
+  <div class="login-card">
+    <div class="login-eyebrow">Account</div>
+    <h1 class="login-title" style="font-size:28px;">Change password</h1>
+    <div class="login-field">
+      <label for="cp-current">Current password</label>
+      <input class="utm-input" type="password" id="cp-current" autocomplete="current-password" />
+    </div>
+    <div class="login-field">
+      <label for="cp-new">New password</label>
+      <input class="utm-input" type="password" id="cp-new" autocomplete="new-password" placeholder="Min 6 characters" />
+    </div>
+    <div class="login-field">
+      <label for="cp-confirm">Confirm new password</label>
+      <input class="utm-input" type="password" id="cp-confirm" autocomplete="new-password" />
+    </div>
+    <div class="login-error" id="cp-error"></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn--blue" style="flex:1;" onclick="submitChangePassword()">Save</button>
+      <button class="btn btn--ghost" style="flex:1;" onclick="closeChangePassword()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <header>
   <div class="hdr-brand">
     <div class="hdr-logo">
@@ -316,17 +376,27 @@ header {
     <div class="hdr-divider"></div>
     <span class="hdr-label">UTM&nbsp;Builder</span>
   </div>
-  <div class="view-toggle">
-    <button class="view-btn active" id="btn-builder" onclick="showView('builder')">Builder</button>
-    <button class="view-btn" id="btn-admin" onclick="showView('admin')">Admin</button>
+  <div class="hdr-right">
+    <div class="user-menu" id="user-menu">
+      <button class="btn btn--ghost btn--sm" onclick="toggleUserMenu()">
+        <span id="hdr-user">User</span>
+      </button>
+      <div class="user-menu-dropdown" id="user-menu-dropdown" hidden>
+        <div class="user-menu-email" id="user-menu-email"></div>
+        <button class="user-menu-item" onclick="openChangePassword()">Change password</button>
+        <button class="user-menu-item" onclick="logout()">Sign out</button>
+      </div>
+    </div>
+    <div class="view-toggle">
+      <button class="view-btn active" id="btn-builder" onclick="showView('builder')">Builder</button>
+      <button class="view-btn" id="btn-admin" onclick="showView('admin')">Admin</button>
+    </div>
   </div>
 </header>
 
-<!-- ═══════════════════════════ BUILDER VIEW ═══════════════════════════ -->
 <div id="view-builder">
 <main class="builder-main">
 
-  <!-- Hero -->
   <div class="page-hero">
     <div class="page-eyebrow">Campaign Toolkit</div>
     <h1 class="page-title">Build a link worth <em>tracking.</em></h1>
@@ -334,7 +404,6 @@ header {
   </div>
   <div class="loading-bar" id="loading-bar"><div class="loading-bar-fill"></div></div>
 
-  <!-- 01 / Base URL -->
   <section class="card">
     <div class="card-hdr">
       <span class="card-num">01/</span>
@@ -346,7 +415,7 @@ header {
     </div>
     <div class="field" id="single-url-field">
       <label for="base-url">Destination</label>
-      <input class="utm-input" type="url" id="base-url" placeholder="https://www.strivepharmacy.com/…" oninput="setFormField('baseUrl', this.value)" />
+      <input class="utm-input" type="url" id="base-url" placeholder="https://www.strivepharmacy.com/..." oninput="setFormField('baseUrl', this.value)" />
     </div>
     <div class="field" id="batch-url-field" hidden>
       <label>Destinations</label>
@@ -358,7 +427,6 @@ header {
     </div>
   </section>
 
-  <!-- 02 / Traffic Source -->
   <section class="card">
     <div class="card-hdr">
       <span class="card-num">02/</span>
@@ -369,7 +437,7 @@ header {
         <label>Source</label>
         <div class="dd-wrap" id="dd-source">
           <button type="button" class="dd-trigger" onclick="toggleDD('source')">
-            <span class="dd-trigger-text placeholder" id="dd-source-label">— select —</span>
+            <span class="dd-trigger-text placeholder" id="dd-source-label">- select -</span>
             <svg class="dd-chevron" width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 1.5L7 7.5L13 1.5" stroke="#1E64F0" stroke-width="1.6" stroke-linecap="round"/></svg>
           </button>
           <div class="dd-menu" id="dd-source-menu"></div>
@@ -379,7 +447,7 @@ header {
         <label>Medium</label>
         <div class="dd-wrap" id="dd-medium">
           <button type="button" class="dd-trigger" onclick="toggleDD('medium')">
-            <span class="dd-trigger-text placeholder" id="dd-medium-label">— select —</span>
+            <span class="dd-trigger-text placeholder" id="dd-medium-label">- select -</span>
             <svg class="dd-chevron" width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 1.5L7 7.5L13 1.5" stroke="#1E64F0" stroke-width="1.6" stroke-linecap="round"/></svg>
           </button>
           <div class="dd-menu" id="dd-medium-menu"></div>
@@ -388,7 +456,6 @@ header {
     </div>
   </section>
 
-  <!-- 03 / Campaign -->
   <section class="card">
     <div class="card-hdr">
       <span class="card-num">03/</span>
@@ -399,14 +466,13 @@ header {
         <circle cx="8" cy="8" r="6.25" stroke="#B1C7F5" stroke-width="1.6"/>
         <path d="M12.5 12.5L16 16" stroke="#B1C7F5" stroke-width="1.6" stroke-linecap="round"/>
       </svg>
-      <input class="utm-input" type="text" id="camp-search" placeholder="Search campaigns…" oninput="filterCampaigns(this.value)" />
+      <input class="utm-input" type="text" id="camp-search" placeholder="Search campaigns..." oninput="filterCampaigns(this.value)" />
     </div>
     <div class="camp-list" id="camp-list">
-      <div class="camp-empty">Loading campaigns…</div>
+      <div class="camp-empty">Loading campaigns...</div>
     </div>
   </section>
 
-  <!-- 04 / Creative -->
   <section class="card">
     <div class="card-hdr">
       <span class="card-num">04/</span>
@@ -417,7 +483,7 @@ header {
         <label>Format</label>
         <div class="dd-wrap" id="dd-format">
           <button type="button" class="dd-trigger" onclick="toggleDD('format')">
-            <span class="dd-trigger-text placeholder" id="dd-format-label">— select —</span>
+            <span class="dd-trigger-text placeholder" id="dd-format-label">- select -</span>
             <svg class="dd-chevron" width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 1.5L7 7.5L13 1.5" stroke="#1E64F0" stroke-width="1.6" stroke-linecap="round"/></svg>
           </button>
           <div class="dd-menu" id="dd-format-menu"></div>
@@ -427,7 +493,7 @@ header {
         <label>Placement</label>
         <div class="dd-wrap" id="dd-placement">
           <button type="button" class="dd-trigger" onclick="toggleDD('placement')">
-            <span class="dd-trigger-text placeholder" id="dd-placement-label">— select —</span>
+            <span class="dd-trigger-text placeholder" id="dd-placement-label">- select -</span>
             <svg class="dd-chevron" width="14" height="9" viewBox="0 0 14 9" fill="none"><path d="M1 1.5L7 7.5L13 1.5" stroke="#1E64F0" stroke-width="1.6" stroke-linecap="round"/></svg>
           </button>
           <div class="dd-menu" id="dd-placement-menu"></div>
@@ -445,8 +511,6 @@ header {
     </button>
   </section>
 
-  <!-- Generated URL -->
-  <!-- Generated URL -->
   <section class="url-section">
     <div class="url-header">
       <span class="url-label">Your tagged URL</span>
@@ -465,7 +529,6 @@ header {
     </button>
   </section>
 
-  <!-- Batch Results -->
   <section class="url-section" id="batch-results-section" hidden>
     <div class="url-header">
       <span class="url-label">Generated links</span>
@@ -477,7 +540,6 @@ header {
 </main>
 </div>
 
-<!-- ═══════════════════════════ ADMIN VIEW ═══════════════════════════ -->
 <div id="view-admin" hidden>
 <main class="admin-main">
 
@@ -486,14 +548,12 @@ header {
     <h1 class="page-title">Keep the inputs <em>clean.</em></h1>
   </div>
 
-  <!-- Admin tabs -->
   <div class="admin-tabs">
     <button class="admin-tab active" id="tab-team"     onclick="showAdminTab('team')">Team links</button>
     <button class="admin-tab"        id="tab-sources"  onclick="showAdminTab('sources')">Sources &amp; mediums</button>
     <button class="admin-tab"        id="tab-settings" onclick="showAdminTab('settings')">Settings</button>
   </div>
 
-  <!-- ── Team links ── -->
   <div id="panel-team">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">      <p style="font-size:15px;color:var(--strive-navy);opacity:0.75;">Saved tagged URLs from your team.</p>
       <div style="display:flex;gap:10px;align-items:center;">
@@ -507,18 +567,17 @@ header {
       </div>
     </div>
     <div class="data-table" id="team-links-table">
-      <div class="table-empty">Loading saved links…</div>
+      <div class="table-empty">Loading saved links...</div>
     </div>
   </div>
 
-  <!-- ── Sources & mediums ── -->
   <div id="panel-sources" hidden>
     <div class="s-m-grid">
       <div class="card" style="margin-bottom:0;">
         <h3 style="font-weight:300;font-size:22px;letter-spacing:-0.04em;color:var(--strive-blue);margin-bottom:16px;">Sources</h3>
         <div class="tags-cloud" id="sources-cloud"></div>
         <div class="tag-add">
-          <input type="text" id="new-source" placeholder="Add source…" onkeydown="if(event.key==='Enter')addTag('source')" />
+          <input type="text" id="new-source" placeholder="Add source..." onkeydown="if(event.key==='Enter')addTag('source')" />
           <button onclick="addTag('source')">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="#FCFAFA" stroke-width="1.6" stroke-linecap="round"/></svg>
           </button>
@@ -528,7 +587,7 @@ header {
         <h3 style="font-weight:300;font-size:22px;letter-spacing:-0.04em;color:var(--strive-blue);margin-bottom:16px;">Mediums</h3>
         <div class="tags-cloud" id="mediums-cloud"></div>
         <div class="tag-add">
-          <input type="text" id="new-medium" placeholder="Add medium…" onkeydown="if(event.key==='Enter')addTag('medium')" />
+          <input type="text" id="new-medium" placeholder="Add medium..." onkeydown="if(event.key==='Enter')addTag('medium')" />
           <button onclick="addTag('medium')">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="#FCFAFA" stroke-width="1.6" stroke-linecap="round"/></svg>
           </button>
@@ -537,57 +596,56 @@ header {
     </div>
   </div>
 
-  <!-- ── Settings ── -->
   <div id="panel-settings" hidden>
-    <!-- Password change section -->
     <div class="card" style="margin-bottom:20px;">
       <div class="card-hdr" style="margin-bottom:16px;">
-        <span class="card-num">🔒</span>
-        <h2 class="card-title">Admin Password</h2>
+        <span class="card-num">USERS</span>
+        <h2 class="card-title">Team Accounts</h2>
+      </div>
+      <p style="font-size:14px;color:var(--strive-navy);opacity:0.7;margin-bottom:16px;">Each teammate signs in with their Strive email and their own password. A sign-in is remembered on that device for 90 days. Anyone with a @strivepharmacy.com email can also create their own account the first time they sign in — use this form to pre-provision an account for someone instead.</p>
+      <div class="data-table" id="users-table" style="margin-bottom:20px;">
+        <div class="table-empty">Loading accounts...</div>
       </div>
       <div class="grid-2" style="margin-bottom:16px;">
         <div class="field">
-          <label>New password</label>
-          <input class="utm-input" type="password" id="new-password" placeholder="Enter new password" style="height:48px;font-size:15px;" />
+          <label>Teammate email</label>
+          <input class="utm-input" type="email" id="new-username" placeholder="name@strivepharmacy.com" style="height:48px;font-size:15px;" />
         </div>
         <div class="field">
-          <label>Confirm password</label>
-          <input class="utm-input" type="password" id="confirm-password" placeholder="Confirm password" style="height:48px;font-size:15px;" />
+          <label>Temporary password</label>
+          <input class="utm-input" type="password" id="new-user-password" placeholder="Min 6 characters" style="height:48px;font-size:15px;" />
         </div>
       </div>
-      <button class="btn btn--blue btn--sm" onclick="changePassword()">Update password</button>
+      <button class="btn btn--blue btn--sm" onclick="addUser()">Add teammate</button>
     </div>
   </div>
 
 </main>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-//  CONFIG
-// ═══════════════════════════════════════════════════════════════
 const WORKER = 'https://utmbuilder.dsaunders.workers.dev';
+const AUTH_KEY = 'utmAuth';
 
-// ── Form state (no re-renders, just pure DOM mutations) ──
+let authState = null;
+
 const form = {
   baseUrl: '',
   source: '',
   medium: '',
-  campaign: '',  // the slug
+  campaign: '',
   format: '',
   placement: '',
   creativeName: '',
 };
 
-// ── Data state ──
-let allCampaigns = []; // { name, slug, tag }
-let savedLinks   = []; // from GitHub
-let sessionKey   = null; // for session-based overwrite
-let selectedForDelete = new Set(); // holds `ts` values of selected links
-let buildMode = 'single'; // 'single' | 'batch'
+let allCampaigns = [];
+let savedLinks   = [];
+let sessionKey   = null;
+let selectedForDelete = new Set();
+let buildMode = 'single';
 let batchRowCount = 0;
 
 function setBuildMode(mode) {
@@ -605,25 +663,25 @@ function setBuildMode(mode) {
   }
 }
 
-function addBatchUrlRow(prefill = '') {
+function addBatchUrlRow(prefill) {
+  prefill = prefill || '';
   batchRowCount++;
   const id = 'batch-row-' + batchRowCount;
   const container = document.getElementById('batch-url-rows');
   const row = document.createElement('div');
   row.id = id;
   row.style.cssText = 'display:flex;gap:8px;margin-bottom:8px;';
-  row.innerHTML = `
-    <input class="utm-input batch-url-input" type="url" placeholder="https://www.strivepharmacy.com/…" value="${escHtml(prefill)}" style="flex:1;" />
-    <button type="button" class="btn btn--ghost btn--icon" onclick="removeBatchUrlRow('${id}')" title="Remove">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 2.5l9 9M11.5 2.5l-9 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-    </button>`;
+  row.innerHTML = '<input class="utm-input batch-url-input" type="url" placeholder="https://www.strivepharmacy.com/..." value="' + escHtml(prefill) + '" style="flex:1;" />' +
+    '<button type="button" class="btn btn--ghost btn--icon" onclick="removeBatchUrlRow(\'' + id + '\')" title="Remove">' +
+    '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2.5 2.5l9 9M11.5 2.5l-9 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>';
   container.appendChild(row);
 }
 
 function removeBatchUrlRow(id) {
   const rows = document.querySelectorAll('#batch-url-rows > div');
   if (rows.length <= 1) { toast('At least one link is required.'); return; }
-  document.getElementById(id)?.remove();
+  const el = document.getElementById(id);
+  if (el) el.remove();
 }
 
 function getBatchUrls() {
@@ -632,92 +690,209 @@ function getBatchUrls() {
     .filter(Boolean);
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  VIEW SWITCHING
-// ═══════════════════════════════════════════════════════════════
-async function showView(v) {
+function loadAuthState() {
+  try {
+    const raw = localStorage.getItem(AUTH_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed.token || !parsed.expiresAt || Date.now() > parsed.expiresAt) {
+      localStorage.removeItem(AUTH_KEY);
+      return null;
+    }
+    return parsed;
+  } catch (e) {
+    return null;
+  }
+}
+
+function saveAuthState(state) {
+  authState = state;
+  localStorage.setItem(AUTH_KEY, JSON.stringify(state));
+  document.getElementById('hdr-user').textContent = 'User';
+  document.getElementById('user-menu-email').textContent = state.email;
+}
+
+function clearAuthState() {
+  authState = null;
+  localStorage.removeItem(AUTH_KEY);
+  document.getElementById('hdr-user').textContent = 'User';
+  document.getElementById('user-menu-email').textContent = '';
+}
+
+function toggleUserMenu() {
+  const dd = document.getElementById('user-menu-dropdown');
+  dd.hidden = !dd.hidden;
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('#user-menu')) {
+    document.getElementById('user-menu-dropdown').hidden = true;
+  }
+});
+
+function openChangePassword() {
+  document.getElementById('user-menu-dropdown').hidden = true;
+  document.getElementById('cp-current').value = '';
+  document.getElementById('cp-new').value = '';
+  document.getElementById('cp-confirm').value = '';
+  document.getElementById('cp-error').textContent = '';
+  document.getElementById('change-password-overlay').style.display = 'flex';
+}
+
+function closeChangePassword() {
+  document.getElementById('change-password-overlay').style.display = 'none';
+}
+
+async function submitChangePassword() {
+  const current = document.getElementById('cp-current').value;
+  const next = document.getElementById('cp-new').value;
+  const confirmVal = document.getElementById('cp-confirm').value;
+  const errEl = document.getElementById('cp-error');
+  errEl.textContent = '';
+  if (!current || !next) { errEl.textContent = 'Fill in all fields.'; return; }
+  if (next.length < 6) { errEl.textContent = 'New password must be at least 6 characters.'; return; }
+  if (next !== confirmVal) { errEl.textContent = 'New passwords do not match.'; return; }
+  try {
+    const res = await apiFetch('/api/auth/change-password', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword: current, newPassword: next })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { errEl.textContent = data.error || 'Could not update password.'; return; }
+    closeChangePassword();
+    toast('Password updated');
+  } catch (e) {
+    errEl.textContent = 'Could not reach the server.';
+  }
+}
+
+async function apiFetch(path, options) {
+  options = options || {};
+  const headers = Object.assign({}, options.headers || {});
+  if (authState && authState.token) headers['Authorization'] = 'Bearer ' + authState.token;
+  const res = await fetch(WORKER + path, Object.assign({}, options, { headers }));
+  if (res.status === 401) {
+    clearAuthState();
+    toast('Your session expired - please sign in again.');
+    showLoginOverlay();
+  }
+  return res;
+}
+
+let loginFlow = { email: '', exists: false };
+
+function showLoginOverlay() {
+  document.getElementById('login-overlay').style.display = 'flex';
+  resetLoginForm();
+}
+
+function hideLoginOverlay() {
+  document.getElementById('login-overlay').style.display = 'none';
+}
+
+function resetLoginForm() {
+  document.getElementById('login-email').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('login-confirm-password').value = '';
+  document.getElementById('login-email-error').textContent = '';
+  document.getElementById('login-error').textContent = '';
+  document.getElementById('login-step-password').hidden = true;
+  document.getElementById('login-step-email').hidden = false;
+  document.getElementById('login-mode-title').textContent = 'Sign in';
+}
+
+function backToEmailStep() {
+  document.getElementById('login-step-password').hidden = true;
+  document.getElementById('login-step-email').hidden = false;
+  document.getElementById('login-mode-title').textContent = 'Sign in';
+  document.getElementById('login-error').textContent = '';
+}
+
+async function submitEmailStep() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const errEl = document.getElementById('login-email-error');
+  errEl.textContent = '';
+  if (!email.endsWith('@strivepharmacy.com')) {
+    errEl.textContent = 'Please use your @strivepharmacy.com email address.';
+    return;
+  }
+  try {
+    const res = await fetch(WORKER + '/api/auth/check-email', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.valid) { errEl.textContent = data.error || 'Please use your @strivepharmacy.com email address.'; return; }
+
+    loginFlow.email = email;
+    loginFlow.exists = data.exists;
+
+    document.getElementById('login-step-email').hidden = true;
+    document.getElementById('login-step-password').hidden = false;
+    document.getElementById('login-mode-title').textContent = data.exists ? 'Sign in' : 'Create your password';
+    document.getElementById('login-password-hint').textContent = data.exists
+      ? 'Enter your password.'
+      : "First time signing in - set a password. You'll use this same one every time after.";
+    document.getElementById('login-password-label').textContent = data.exists ? 'Password' : 'Create a password';
+    document.getElementById('login-confirm-field').hidden = data.exists;
+    document.getElementById('login-submit-btn').textContent = data.exists ? 'Sign in' : 'Create account & sign in';
+    document.getElementById('login-password').value = '';
+    document.getElementById('login-confirm-password').value = '';
+    document.getElementById('login-error').textContent = '';
+    document.getElementById('login-password').focus();
+  } catch (e) {
+    errEl.textContent = 'Could not reach the server.';
+  }
+}
+
+async function submitPasswordStep() {
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+  errEl.textContent = '';
+  if (!password) { errEl.textContent = 'Enter a password.'; return; }
+
+  const endpoint = loginFlow.exists ? '/api/auth/login' : '/api/auth/signup';
+  if (!loginFlow.exists) {
+    const confirmVal = document.getElementById('login-confirm-password').value;
+    if (password.length < 6) { errEl.textContent = 'Password must be at least 6 characters.'; return; }
+    if (password !== confirmVal) { errEl.textContent = 'Passwords do not match.'; return; }
+  }
+
+  try {
+    const res = await fetch(WORKER + endpoint, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: loginFlow.email, password })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { errEl.textContent = data.error || 'Sign-in failed.'; return; }
+    saveAuthState({ email: data.email, token: data.token, expiresAt: data.expiresAt });
+    hideLoginOverlay();
+    resetLoginForm();
+    loadTags();
+    loadCampaigns();
+    toast('Welcome, ' + data.email + '!');
+  } catch (e) {
+    errEl.textContent = 'Could not reach the server.';
+  }
+}
+
+function logout() {
+  clearAuthState();
+  showLoginOverlay();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Enter') return;
+  if (document.getElementById('login-overlay').style.display !== 'flex') return;
+  if (!document.getElementById('login-step-email').hidden) submitEmailStep();
+  else if (!document.getElementById('login-step-password').hidden) submitPasswordStep();
+});
+
+function showView(v) {
   document.getElementById('view-builder').hidden = v !== 'builder';
   document.getElementById('view-admin').hidden   = v !== 'admin';
   document.getElementById('btn-builder').classList.toggle('active', v === 'builder');
   document.getElementById('btn-admin').classList.toggle('active', v === 'admin');
-
-  if (v === 'admin') {
-    const status = await getAdminStatus();
-
-    // First-ever login: no password set yet — force setup
-    if (!status.configured) {
-      const newPw = prompt('No admin password has been set yet.\nCreate one now (min 6 characters):');
-      if (!newPw) { showView('builder'); return; }
-      if (newPw.length < 6) {
-        alert('Password must be at least 6 characters.');
-        showView('builder');
-        return;
-      }
-      const confirmPw = prompt('Confirm your new password:');
-      if (newPw !== confirmPw) {
-        alert('Passwords did not match. Please try again.');
-        showView('builder');
-        return;
-      }
-      const ok = await setAdminPassword(newPw);
-      if (!ok) {
-        alert('Could not save password — check your connection and try again.');
-        showView('builder');
-        return;
-      }
-      toast('Password created ✓');
-      loadAdminData();
-      return;
-    }
-
-    // Normal login: password already exists
-    const entered = prompt('Admin password:');
-    if (entered === null) { showView('builder'); return; }
-    const ok = await checkAdminPassword(entered);
-    if (!ok) {
-      alert('Incorrect password.');
-      showView('builder');
-      return;
-    }
-    loadAdminData();
-  }
-}
-
-async function getAdminStatus() {
-  try {
-    const res = await fetch(WORKER + '/api/settings');
-    if (!res.ok) return { configured: true }; // fail-safe: require a password rather than skip auth
-    return await res.json();
-  } catch (e) {
-    return { configured: true };
-  }
-}
-
-async function setAdminPassword(pw) {
-  try {
-    const res = await fetch(WORKER + '/api/settings', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: pw })
-    });
-    return res.ok;
-  } catch (e) {
-    return false;
-  }
-}
-
-async function checkAdminPassword(entered) {
-  try {
-    const res = await fetch(WORKER + '/api/settings/check', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: entered })
-    });
-    if (!res.ok) return false;
-    const data = await res.json();
-    return !!data.ok;
-  } catch (e) {
-    toast('Could not verify password — check connection');
-    return false;
-  }
+  if (v === 'admin') loadAdminData();
 }
 
 function showAdminTab(t) {
@@ -725,18 +900,13 @@ function showAdminTab(t) {
     document.getElementById('panel-' + id).hidden = id !== t;
     document.getElementById('tab-' + id).classList.toggle('active', id === t);
   });
+  if (t === 'settings') loadUsers();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  FORM FIELD UPDATES (no full re-render)
-// ═══════════════════════════════════════════════════════════════
 function setFormField(key, val) {
   form[key] = val.trim();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  SOURCES / MEDIUMS — locked lists loaded from Worker
-// ═══════════════════════════════════════════════════════════════
 const DEFAULT_SOURCES = [
   'paid_social','organic_social','paid_search','organic_search','display',
   'gaggleamp','partnersite','cold_outreach','relationship_outreach','print',
@@ -752,9 +922,7 @@ const DEFAULT_MEDIUMS = [
 
 let adminSources = [...DEFAULT_SOURCES];
 let adminMediums = [...DEFAULT_MEDIUMS];
-// ═══════════════════════════════════════════════════════════════
-//  CUSTOM DROPDOWNS
-// ═══════════════════════════════════════════════════════════════
+
 const DD_OPTIONS = {
   source: adminSources,
   medium: adminMediums,
@@ -763,13 +931,13 @@ const DD_OPTIONS = {
 };
 async function loadTags() {
   try {
-    const res = await fetch(WORKER + '/api/tags');
+    const res = await apiFetch('/api/tags');
     if (res.ok) {
       const data = await res.json();
       adminSources = (data.sources && data.sources.length) ? data.sources : [...DEFAULT_SOURCES];
       adminMediums = (data.mediums && data.mediums.length) ? data.mediums : [...DEFAULT_MEDIUMS];
     }
-  } catch(e) { /* fall back to defaults already set */ }
+  } catch(e) { }
   buildDD('source', adminSources);
   buildDD('medium', adminMediums);
 }
@@ -781,7 +949,7 @@ function buildDD(id, options) {
     const div = document.createElement('div');
     div.className = 'dd-option';
     div.dataset.val = val;
-    div.innerHTML = `${escHtml(val)}<svg class="dd-option-check" width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 5.5L5 9.5L13 1.5" stroke="#1E64F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    div.innerHTML = escHtml(val) + '<svg class="dd-option-check" width="14" height="11" viewBox="0 0 14 11" fill="none"><path d="M1 5.5L5 9.5L13 1.5" stroke="#1E64F0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
     div.onclick = () => selectDD(id, val);
     menu.appendChild(div);
   });
@@ -791,7 +959,6 @@ function toggleDD(id) {
   const trigger = document.querySelector('#dd-' + id + ' .dd-trigger');
   const menu    = document.getElementById('dd-' + id + '-menu');
   const isOpen  = menu.classList.contains('open');
-  // Close all
   document.querySelectorAll('.dd-trigger.open').forEach(t => t.classList.remove('open'));
   document.querySelectorAll('.dd-menu.open').forEach(m => m.classList.remove('open'));
   if (!isOpen) { trigger.classList.add('open'); menu.classList.add('open'); }
@@ -802,10 +969,8 @@ function selectDD(id, val) {
   const label = document.getElementById('dd-' + id + '-label');
   label.textContent = val;
   label.classList.remove('placeholder');
-  // Mark selected
   const menu = document.getElementById('dd-' + id + '-menu');
   menu.querySelectorAll('.dd-option').forEach(o => o.classList.toggle('selected', o.dataset.val === val));
-  // Close
   document.querySelector('#dd-' + id + ' .dd-trigger').classList.remove('open');
   menu.classList.remove('open');
 }
@@ -820,11 +985,10 @@ function populateSelects() {
     }
   });
 }
-// ── Creative name: spaces → underscores, strip invalid chars ──
+
 function handleCreativeName(input) {
   const pos = input.selectionStart;
   const raw = input.value;
-  // Only replace spaces with underscores — allow all other characters freely
   const clean = raw.replace(/ /g, '_');
   if (clean !== raw) {
     input.value = clean;
@@ -833,16 +997,12 @@ function handleCreativeName(input) {
   form.creativeName = clean;
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  CAMPAIGNS — load from Worker (HubSpot proxy)
-// ═══════════════════════════════════════════════════════════════
 async function loadCampaigns() {
   showLoading(true);
   try {
-    const res = await fetch(WORKER + '/api/campaigns');
+    const res = await apiFetch('/api/campaigns');
     if (!res.ok) throw new Error('Failed');
     const data = await res.json();
-    // Worker returns: { campaigns: [{ id, name, utmCampaign }] }
     allCampaigns = (data.campaigns || []).map(c => ({
       name:     c.name        || c.id || '',
       utmVal:   c.utmCampaign || c.name || c.id || '',
@@ -865,12 +1025,7 @@ function renderCampaignList(list) {
     const btn = document.createElement('button');
     btn.className = 'camp-item' + (form.campaign === c.utmVal ? ' selected' : '');
     btn.dataset.utm = c.utmVal;
-    btn.innerHTML = `
-      <span>
-        <div class="camp-item-name">${escHtml(c.name)}</div>
-        <div class="camp-item-slug">${escHtml(c.utmVal)}</div>
-      </span>
-      <span class="camp-tag active">Active</span>`;
+    btn.innerHTML = '<span><div class="camp-item-name">' + escHtml(c.name) + '</div><div class="camp-item-slug">' + escHtml(c.utmVal) + '</div></span><span class="camp-tag active">Active</span>';
     btn.onclick = () => selectCampaign(c.utmVal, c.name, btn);
     el.appendChild(btn);
   });
@@ -878,7 +1033,7 @@ function renderCampaignList(list) {
 
 function selectCampaign(utmVal, campName, btn) {
   form.campaign = utmVal;
-  form.campaignName = campName;   // ← this line is missing in your current file
+  form.campaignName = campName;
   document.querySelectorAll('.camp-item').forEach(b => b.classList.remove('selected'));
   if (btn) btn.classList.add('selected');
 }
@@ -892,9 +1047,6 @@ function filterCampaigns(q) {
   renderCampaignList(filtered);
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  GENERATE UTM
-// ═══════════════════════════════════════════════════════════════
 function buildUTM() {
   let base = form.baseUrl.trim();
   if (!base) return null;
@@ -903,8 +1055,6 @@ function buildUTM() {
   const p = new URLSearchParams();
   if (form.source) p.set('utm_source', form.source);
   if (form.medium) p.set('utm_medium', form.medium);
-  // utm_campaign intentionally excluded from URLSearchParams —
-  // appended raw below so HubSpot's already-encoded value passes through untouched.
 
   const parts = [form.format, form.placement, sanitize(form.creativeName)].filter(Boolean);
   if (parts.length) p.set('utm_content', parts.join('-'));
@@ -934,12 +1084,8 @@ async function generateUTM() {
   btn.disabled = true;
   spinner.classList.add('visible');
 
-  // Display immediately
-  showURLBox(url);
-// Display immediately
   showURLBox(url);
   celebrate(1);
-  // Save to GitHub silently
   try {
     const payload = {
       url, source: form.source, medium: form.medium,
@@ -947,7 +1093,7 @@ async function generateUTM() {
       content: buildContent(),
       baseUrl: form.baseUrl, ts: Date.now(), sessionKey: getSessionKey()
     };
-    const res = await fetch(WORKER + '/api/save', {
+    const res = await apiFetch('/api/save', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
@@ -955,7 +1101,7 @@ async function generateUTM() {
       const d = await res.json();
       if (d.sessionKey) sessionKey = d.sessionKey;
     }
-  } catch(e) { /* silent */ }
+  } catch(e) { }
 
   btn.disabled = false;
   spinner.classList.remove('visible');
@@ -979,7 +1125,7 @@ async function generateBatchUTMs() {
   const results = [];
 
   for (let i = 0; i < urls.length; i++) {
-    statusEl.textContent = `Generating ${i + 1} of ${urls.length}…`;
+    statusEl.textContent = 'Generating ' + (i + 1) + ' of ' + urls.length + '...';
     let base = urls[i];
     if (!/^https?:\/\//i.test(base)) base = 'https://' + base;
 
@@ -1001,24 +1147,19 @@ async function generateBatchUTMs() {
         content: buildContent(),
         baseUrl: base, ts: Date.now() + i, sessionKey: Math.random().toString(36).slice(2)
       };
-      await fetch(WORKER + '/api/save', {
+      await apiFetch('/api/save', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
-    } catch(e) { /* continue even if one save fails */ }
+    } catch(e) { }
   }
 
- statusEl.textContent = `${urls.length} link${urls.length === 1 ? '' : 's'} generated & saved`;
+  statusEl.textContent = urls.length + ' link' + (urls.length === 1 ? '' : 's') + ' generated & saved';
   celebrate(Math.min(1 + urls.length * 0.15, 2.5));
-  table.innerHTML = results.map((u) => `
-    <div class="data-row">
-      <div style="min-width:0;">
-        <div class="data-row-sub" style="word-break:break-all;">${escHtml(u)}</div>
-      </div>
-      <div class="data-row-actions">
-        <button class="btn btn--ghost btn--sm" onclick="navigator.clipboard.writeText('${u.replace(/'/g, "\\'")}'); toast('Copied!');">Copy</button>
-      </div>
-    </div>`).join('');
+  table.innerHTML = results.map((u) =>
+    '<div class="data-row"><div style="min-width:0;"><div class="data-row-sub" style="word-break:break-all;">' + escHtml(u) + '</div></div>' +
+    '<div class="data-row-actions"><button class="btn btn--ghost btn--sm" onclick="navigator.clipboard.writeText(\'' + u.replace(/'/g, "\\'") + '\'); toast(\'Copied!\');">Copy</button></div></div>'
+  ).join('');
 
   btn.disabled = false;
   spinner.classList.remove('visible');
@@ -1050,7 +1191,6 @@ function showURLBox(url) {
   status.textContent = 'Click to copy';
   status.className = 'url-status idle';
 
-  // Param chips
   params.style.display = '';
   params.innerHTML = '';
   const chipDefs = [
@@ -1062,7 +1202,7 @@ function showURLBox(url) {
   chipDefs.forEach(([k, v]) => {
     const span = document.createElement('span');
     span.className = 'url-param';
-    span.innerHTML = `<span>${k}</span>&nbsp;${escHtml(v)}`;
+    span.innerHTML = '<span>' + k + '</span>&nbsp;' + escHtml(v);
     params.appendChild(span);
   });
 
@@ -1074,7 +1214,7 @@ function copyUrl() {
   if (!url) return;
   try { navigator.clipboard && navigator.clipboard.writeText(url); } catch(e) {}
   const status = document.getElementById('copy-status');
-  status.textContent = 'Copied to clipboard ✓';
+  status.textContent = 'Copied to clipboard';
   status.className = 'url-status copied';
   setTimeout(() => {
     status.textContent = 'Click to copy';
@@ -1082,13 +1222,9 @@ function copyUrl() {
   }, 1800);
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  ADMIN — load data
-// ═══════════════════════════════════════════════════════════════
 async function loadAdminData() {
-  // Team links
   try {
-    const res = await fetch(WORKER + '/api/save');
+    const res = await apiFetch('/api/save');
     if (res.ok) {
       const data = await res.json();
       savedLinks = data.links || [];
@@ -1097,9 +1233,20 @@ async function loadAdminData() {
   } catch(e) {
     document.getElementById('team-links-table').innerHTML = '<div class="table-empty">Could not load links.</div>';
   }
-  // Sources & mediums clouds
   renderSourcesCloud();
   renderMediumsCloud();
+}
+
+function prettyCampaignLabel(lnk) {
+  if (lnk.campaignName) return lnk.campaignName;
+  if (lnk.campaign) {
+    try {
+      return decodeURIComponent(lnk.campaign).replace(/^\d+-/, '');
+    } catch (e) {
+      return lnk.campaign;
+    }
+  }
+  return lnk.source || 'Tagged URL';
 }
 
 function renderTeamLinks() {
@@ -1111,7 +1258,6 @@ function renderTeamLinks() {
   }
   el.innerHTML = '';
 
-  // Pair each link with its original index, then sort newest-first
   const ordered = savedLinks
     .map((lnk, originalIdx) => ({ lnk, originalIdx }))
     .sort((a, b) => new Date(b.lnk.savedAt || 0) - new Date(a.lnk.savedAt || 0));
@@ -1120,20 +1266,16 @@ function renderTeamLinks() {
     const row = document.createElement('div');
     row.className = 'data-row';
     const displayUrl = lnk.url || '';
-    const label = lnk.campaignName || lnk.campaign || lnk.source || 'Tagged URL';
+    const label = prettyCampaignLabel(lnk);
     const isChecked = selectedForDelete.has(lnk.ts);
-    row.innerHTML = `
-      <div style="display:flex;align-items:center;gap:14px;min-width:0;">
-        <input type="checkbox" ${isChecked ? 'checked' : ''} onchange="toggleSelectLink(${lnk.ts}, this.checked)" style="flex-shrink:0;width:16px;height:16px;cursor:pointer;" />
-        <div style="min-width:0;">
-          <div class="data-row-main">${escHtml(label)}</div>
-          <div class="data-row-sub">${escHtml(displayUrl.slice(0, 80))}${displayUrl.length > 80 ? '…' : ''}</div>
-        </div>
-      </div>
-      <div class="data-row-actions">
-        <button class="btn btn--ghost btn--sm" onclick="copyLinkAt(${originalIdx})">Copy</button>
-        <button class="btn btn--sm" style="color:var(--red);border-color:var(--red);" onclick="deleteLink(${originalIdx})">Delete</button>
-      </div>`;
+    row.innerHTML =
+      '<div style="display:flex;align-items:center;gap:14px;min-width:0;">' +
+      '<input type="checkbox" ' + (isChecked ? 'checked' : '') + ' onchange="toggleSelectLink(' + lnk.ts + ', this.checked)" style="flex-shrink:0;width:16px;height:16px;cursor:pointer;" />' +
+      '<div style="min-width:0;"><div class="data-row-main">' + escHtml(label) + '</div>' +
+      '<div class="data-row-sub">' + escHtml(displayUrl.slice(0, 80)) + (displayUrl.length > 80 ? '...' : '') + '</div></div></div>' +
+      '<div class="data-row-actions">' +
+      '<button class="btn btn--ghost btn--sm" onclick="copyLinkAt(' + originalIdx + ')">Copy</button>' +
+      '<button class="btn btn--sm" style="color:var(--red);border-color:var(--red);" onclick="deleteLink(' + originalIdx + ')">Delete</button></div>';
     el.appendChild(row);
   });
 
@@ -1157,33 +1299,32 @@ function updateBulkDeleteUI() {
 async function bulkDeleteSelected() {
   const count = selectedForDelete.size;
   if (!count) return;
-  if (!confirm(`Delete ${count} selected link${count === 1 ? '' : 's'}? This can't be undone.`)) return;
+  if (!confirm('Delete ' + count + ' selected link' + (count === 1 ? '' : 's') + '? This can\'t be undone.')) return;
 
   const btn = document.getElementById('bulk-delete-btn');
   btn.disabled = true;
-  btn.textContent = 'Deleting…';
+  btn.textContent = 'Deleting...';
 
-  // Remove locally first so the UI feels instant
   const remaining = savedLinks.filter(l => !selectedForDelete.has(l.ts));
 
   try {
-    await fetch(WORKER + '/api/save', {
+    await apiFetch('/api/save', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ replace: true, links: remaining })
     });
     savedLinks = remaining;
     selectedForDelete.clear();
     renderTeamLinks();
-    toast(`${count} link${count === 1 ? '' : 's'} deleted`);
+    toast(count + ' link' + (count === 1 ? '' : 's') + ' deleted');
   } catch(e) {
     toast('Bulk delete failed');
   }
 
   btn.disabled = false;
 }
-   
+
 function copyLinkAt(realIdx) {
-  const url = savedLinks[realIdx]?.url;
+  const url = savedLinks[realIdx] && savedLinks[realIdx].url;
   if (url) { try { navigator.clipboard && navigator.clipboard.writeText(url); } catch(e) {} toast('Copied!'); }
 }
 
@@ -1191,7 +1332,7 @@ async function deleteLink(realIdx) {
   if (!confirm('Delete this link?')) return;
   const lnk = savedLinks[realIdx];
   try {
-    await fetch(WORKER + '/api/save', {
+    await apiFetch('/api/save', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'delete', ts: lnk.ts })
     });
@@ -1205,7 +1346,7 @@ function exportCSV() {
   if (!savedLinks.length) { toast('No links to export'); return; }
   const cols = ['url','source','medium','campaign','content','baseUrl','ts'];
   const rows = [cols.join(','), ...savedLinks.map(l =>
-    cols.map(c => `"${(l[c] || '').toString().replace(/"/g, '""')}"`).join(',')
+    cols.map(c => '"' + (l[c] || '').toString().replace(/"/g, '""') + '"').join(',')
   )];
   const blob = new Blob([rows.join('\n')], { type: 'text/csv' });
   const a = document.createElement('a');
@@ -1214,17 +1355,13 @@ function exportCSV() {
   a.click();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  SOURCES & MEDIUMS (admin display only — selects use locked list)
-// ═══════════════════════════════════════════════════════════════
-
 function renderSourcesCloud() {
   const el = document.getElementById('sources-cloud');
   el.innerHTML = '';
   adminSources.forEach(s => {
     const chip = document.createElement('span');
     chip.className = 'tag-chip';
-    chip.innerHTML = `${escHtml(s)}<button onclick="removeTag('source','${escHtml(s)}')" title="Remove"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>`;
+    chip.innerHTML = escHtml(s) + '<button onclick="removeTag(\'source\',\'' + escHtml(s) + '\')" title="Remove"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>';
     el.appendChild(chip);
   });
 }
@@ -1235,14 +1372,14 @@ function renderMediumsCloud() {
   adminMediums.forEach(m => {
     const chip = document.createElement('span');
     chip.className = 'tag-chip';
-    chip.innerHTML = `${escHtml(m)}<button onclick="removeTag('medium','${escHtml(m)}')" title="Remove"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>`;
+    chip.innerHTML = escHtml(m) + '<button onclick="removeTag(\'medium\',\'' + escHtml(m) + '\')" title="Remove"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>';
     el.appendChild(chip);
   });
 }
 
 async function saveTags() {
   try {
-    await fetch(WORKER + '/api/tags', {
+    await apiFetch('/api/tags', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sources: adminSources, mediums: adminMediums })
     });
@@ -1280,39 +1417,76 @@ function removeTag(type, val) {
   saveTags();
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  SETTINGS — password change
-// ═══════════════════════════════════════════════════════════════
-async function changePassword() {
-  const np = document.getElementById('new-password').value;
-  const cp = document.getElementById('confirm-password').value;
-  if (!np) { toast('Enter a new password'); return; }
-  if (np !== cp) { toast('Passwords do not match'); return; }
-  if (np.length < 6) { toast('Password must be at least 6 characters'); return; }
-
+async function loadUsers() {
+  const el = document.getElementById('users-table');
+  el.innerHTML = '<div class="table-empty">Loading accounts...</div>';
   try {
-    const res = await fetch(WORKER + '/api/settings', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: np })
-    });
-    if (!res.ok) throw new Error('Save failed');
-    document.getElementById('new-password').value = '';
-    document.getElementById('confirm-password').value = '';
-    toast('Password updated ✓');
+    const res = await apiFetch('/api/users');
+    if (!res.ok) throw new Error('failed');
+    const data = await res.json();
+    renderUsers(data.users || []);
   } catch (e) {
-    toast('Could not update password');
+    el.innerHTML = '<div class="table-empty">Could not load accounts.</div>';
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  UI HELPERS
-// ═══════════════════════════════════════════════════════════════
+function renderUsers(users) {
+  const el = document.getElementById('users-table');
+  if (!users.length) { el.innerHTML = '<div class="table-empty">No accounts yet.</div>'; return; }
+  el.innerHTML = '';
+  users.forEach(u => {
+    const row = document.createElement('div');
+    row.className = 'data-row';
+    const isYou = authState && u.email === authState.email;
+    row.innerHTML =
+      '<div><div class="data-row-main">' + escHtml(u.email) + (isYou ? ' (you)' : '') + '</div>' +
+      '<div class="data-row-sub">Added ' + (u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-') + '</div></div>' +
+      '<div class="data-row-actions"><button class="btn btn--sm" style="color:var(--red);border-color:var(--red);" onclick="deleteUser(\'' + escHtml(u.email) + '\')">Remove</button></div>';
+    el.appendChild(row);
+  });
+}
+
+async function addUser() {
+  const email = document.getElementById('new-username').value.trim().toLowerCase();
+  const password = document.getElementById('new-user-password').value;
+  if (!email.endsWith('@strivepharmacy.com')) { toast('Enter a @strivepharmacy.com email address'); return; }
+  if (!password) { toast('Enter a temporary password'); return; }
+  if (password.length < 6) { toast('Password must be at least 6 characters'); return; }
+  try {
+    const res = await apiFetch('/api/users', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) { toast(data.error || 'Could not add account'); return; }
+    document.getElementById('new-username').value = '';
+    document.getElementById('new-user-password').value = '';
+    toast('Account created');
+    loadUsers();
+  } catch (e) { toast('Could not add account'); }
+}
+
+async function deleteUser(email) {
+  if (!confirm('Remove ' + email + '\'s account?')) return;
+  try {
+    const res = await apiFetch('/api/users', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', email })
+    });
+    const data = await res.json();
+    if (!res.ok) { toast(data.error || 'Could not remove account'); return; }
+    toast('Account removed');
+    loadUsers();
+  } catch (e) { toast('Could not remove account'); }
+}
+
 function showLoading(v) {
   document.getElementById('loading-bar').classList.toggle('visible', v);
 }
 
 let toastTimer;
-function toast(msg, dur = 2400) {
+function toast(msg, dur) {
+  dur = dur || 2400;
   const el = document.getElementById('toast');
   el.textContent = msg;
   el.classList.add('show');
@@ -1324,12 +1498,10 @@ function escHtml(s) {
   return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// ═══════════════════════════════════════════════════════════════
-//  CELEBRATION — full screen confetti blast
-// ═══════════════════════════════════════════════════════════════
 const CONFETTI_COLORS = ['#1E64F0', '#142850', '#FF8C78', '#B1C7F5', '#FCFAFA', '#059669'];
 
-function celebrate(intensity = 1) {
+function celebrate(intensity) {
+  intensity = intensity || 1;
   const canvas = document.createElement('canvas');
   canvas.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;pointer-events:none;z-index:9999;';
   document.body.appendChild(canvas);
@@ -1373,12 +1545,10 @@ function celebrate(intensity = 1) {
   }
 
   const total = Math.floor(260 * intensity);
-  // Two bottom-corner cannons + a center-top shower for full-screen coverage
   spawnBurst(W() * 0.08, H() * 1.0, total * 0.35, Math.PI * 0.6, 15);
   spawnBurst(W() * 0.92, H() * 1.0, total * 0.35, Math.PI * 0.6, 15);
   spawnBurst(W() * 0.5, H() * -0.05, total * 0.3, Math.PI * 1.4, 9);
 
-  // Rolling extra bursts for a couple seconds so it doesn't feel like one pop
   let bursts = 0;
   const burstInterval = setInterval(() => {
     bursts++;
@@ -1429,13 +1599,19 @@ function celebrate(intensity = 1) {
   }
   tick();
 }
-// ═══════════════════════════════════════════════════════════════
-//  INIT
-// ═══════════════════════════════════════════════════════════════
+
 (function init() {
   populateSelects();
-  loadTags();
-  loadCampaigns();
+  authState = loadAuthState();
+  if (authState) {
+    document.getElementById('hdr-user').textContent = 'User';
+    document.getElementById('user-menu-email').textContent = authState.email;
+    hideLoginOverlay();
+    loadTags();
+    loadCampaigns();
+  } else {
+    showLoginOverlay();
+  }
 })();
 </script>
 </body>
