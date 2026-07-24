@@ -1,3 +1,18 @@
 {
-  "presets": []
+  "presets": [
+    {
+      "id": "43cec03b-d453-4de9-93ea-faf8fc5d4c7b",
+      "email": "dsaunders@strivepharmacy.com",
+      "name": "Test",
+      "fields": {
+        "source": "paid_social",
+        "medium": "linkedin",
+        "format": "video",
+        "placement": "feed",
+        "campaign": "",
+        "campaignName": ""
+      },
+      "createdAt": "2026-07-24T21:09:06.344Z"
+    }
+  ]
 }
