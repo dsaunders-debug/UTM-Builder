@@ -350,7 +350,7 @@ header {
     <div class="login-error" id="cp-error"></div>
     <div style="display:flex;gap:10px;">
       <button class="btn btn--blue" style="flex:1;" onclick="submitChangePassword()">Save</button>
-      <button class="btn btn--ghost" style="flex:1;" onclick="closeChangePassword()">Cancel</button>
+      <button class="btn btn--ghost" style="flex:1;" id="cp-cancel-btn" onclick="closeChangePassword()">Cancel</button>
     </div>
   </div>
 </div>
@@ -359,14 +359,14 @@ header {
   <div class="login-card">
     <div class="login-eyebrow">Restricted</div>
     <h1 class="login-title" style="font-size:28px;">Admin access</h1>
-    <p style="font-size:13px;color:var(--strive-navy);opacity:0.65;margin-top:-14px;margin-bottom:20px;">Enter the admin password to manage links, tags, and accounts.</p>
+    <p style="font-size:13px;color:var(--strive-navy);opacity:0.65;margin-top:-14px;margin-bottom:20px;">Your account doesn't have the admin role. Enter the admin password once to permanently add it to your account, or ask an existing admin to grant it in Team Accounts.</p>
     <div class="login-field">
       <label for="admin-gate-password">Admin password</label>
       <input class="utm-input" type="password" id="admin-gate-password" autocomplete="off" />
     </div>
     <div class="login-error" id="admin-gate-error"></div>
     <div style="display:flex;gap:10px;">
-      <button class="btn btn--blue" style="flex:1;" onclick="submitAdminGate()">Unlock</button>
+      <button class="btn btn--blue" style="flex:1;" onclick="submitAdminGate()">Claim admin</button>
       <button class="btn btn--ghost" style="flex:1;" onclick="cancelAdminGate()">Cancel</button>
     </div>
   </div>
@@ -423,8 +423,8 @@ header {
 
   <section class="card" id="presets-card">
     <div class="card-hdr" style="margin-bottom:14px;">
-      <span class="card-num">PRESET</span>
-      <h2 class="card-title">My Presets</h2>
+      <span class="card-num">MINE</span>
+      <h2 class="card-title">My presets</h2>
     </div>
     <p style="font-size:13px;color:var(--strive-navy);opacity:0.6;margin-bottom:14px;">Only you can see these. Set up the fields below, then save the combo here for one-click reuse.</p>
     <div class="tags-cloud" id="presets-cloud" style="margin-bottom:12px;min-height:0;">
@@ -571,6 +571,17 @@ header {
     <div class="data-table" id="batch-results-table"></div>
   </section>
 
+  <section class="card" style="margin-top:24px;">
+    <div class="card-hdr" style="margin-bottom:14px;">
+      <span class="card-num">YOURS</span>
+      <h2 class="card-title">Your recent links</h2>
+    </div>
+    <p style="font-size:13px;color:var(--strive-navy);opacity:0.6;margin-bottom:14px;">The last 10 links you created, so you never lose one.</p>
+    <div class="data-table" id="my-links-table">
+      <div class="table-empty">Loading your links...</div>
+    </div>
+  </section>
+
 </main>
 </div>
 
@@ -653,7 +664,7 @@ header {
         <span class="card-num">USERS</span>
         <h2 class="card-title">Team Accounts</h2>
       </div>
-      <p style="font-size:14px;color:var(--strive-navy);opacity:0.7;margin-bottom:16px;">Each teammate signs in with their Strive email and their own password. Sessions expire daily, so everyone signs in fresh each day. Anyone with a @strivepharmacy.com email can also create their own account the first time they sign in — use this form to pre-provision an account for someone instead.</p>
+      <p style="font-size:14px;color:var(--strive-navy);opacity:0.7;margin-bottom:16px;">Each teammate signs in with their Strive email and their own password. Sessions expire daily. Admin access is a per-account role - grant or remove it below. If someone forgets their password, use Reset password to generate a temp one to share; they'll be forced to pick their own when they next sign in.</p>
       <div class="data-table" id="users-table" style="margin-bottom:20px;">
         <div class="table-empty">Loading accounts...</div>
       </div>
@@ -780,16 +791,22 @@ document.addEventListener('click', (e) => {
   }
 });
 
-function openChangePassword() {
+let cpForced = false;
+
+function openChangePassword(forced) {
+  cpForced = !!forced;
   document.getElementById('user-menu-dropdown').hidden = true;
   document.getElementById('cp-current').value = '';
   document.getElementById('cp-new').value = '';
   document.getElementById('cp-confirm').value = '';
-  document.getElementById('cp-error').textContent = '';
+  document.getElementById('cp-error').textContent = cpForced
+    ? 'You signed in with a temporary password. Enter it below as your current password, then choose your own.' : '';
+  document.getElementById('cp-cancel-btn').style.display = cpForced ? 'none' : '';
   document.getElementById('change-password-overlay').style.display = 'flex';
 }
 
 function closeChangePassword() {
+  if (cpForced) return; // must set a new password first
   document.getElementById('change-password-overlay').style.display = 'none';
 }
 
@@ -809,6 +826,7 @@ async function submitChangePassword() {
     });
     const data = await res.json();
     if (!res.ok || !data.ok) { errEl.textContent = data.error || 'Could not update password.'; return; }
+    cpForced = false;
     closeChangePassword();
     toast('Password updated');
   } catch (e) {
@@ -820,8 +838,6 @@ async function apiFetch(path, options) {
   options = options || {};
   const headers = Object.assign({}, options.headers || {});
   if (authState && authState.token) headers['Authorization'] = 'Bearer ' + authState.token;
-  const adminAuth = getAdminAuth();
-  if (adminAuth) headers['X-Admin-Token'] = adminAuth.adminToken;
   const res = await fetch(WORKER + path, Object.assign({}, options, { headers }));
   if (res.status === 401) {
     clearAuthState();
@@ -829,8 +845,7 @@ async function apiFetch(path, options) {
     showLoginOverlay();
   }
   if (res.status === 403) {
-    clearAdminAuth();
-    toast('Admin access expired - unlock again.');
+    toast('Admin access required for that.');
   }
   return res;
 }
@@ -921,13 +936,19 @@ async function submitPasswordStep() {
     });
     const data = await res.json();
     if (!res.ok || !data.ok) { errEl.textContent = data.error || 'Sign-in failed.'; return; }
-    saveAuthState({ email: data.email, token: data.token, expiresAt: data.expiresAt });
+    saveAuthState({ email: data.email, token: data.token, expiresAt: data.expiresAt, isAdmin: !!data.isAdmin });
     hideLoginOverlay();
     resetLoginForm();
     loadTags();
     loadCampaigns();
     loadPresets();
-    toast('Welcome, ' + data.email + '!');
+    loadMyLinks();
+    if (data.mustChangePassword) {
+      openChangePassword(true); // forced: temp password must be replaced
+      toast('Please set your own password to continue');
+    } else {
+      toast('Welcome, ' + data.email + '!');
+    }
   } catch (e) {
     errEl.textContent = 'Could not reach the server.';
   }
@@ -935,7 +956,6 @@ async function submitPasswordStep() {
 
 function logout() {
   clearAuthState();
-  clearAdminAuth();
   // If they were on the Admin view, put the UI back on Builder for next sign-in
   document.getElementById('view-builder').hidden = false;
   document.getElementById('view-admin').hidden = true;
@@ -952,7 +972,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 function showView(v) {
-  if (v === 'admin' && !getAdminAuth()) {
+  if (v === 'admin' && !(authState && authState.isAdmin)) {
     openAdminGate();
     return;
   }
@@ -963,26 +983,7 @@ function showView(v) {
   if (v === 'admin') loadAdminData();
 }
 
-// ── Admin gate ──
-const ADMIN_KEY = 'utmAdminAuth';
-
-function getAdminAuth() {
-  try {
-    const raw = localStorage.getItem(ADMIN_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed.adminToken || !parsed.adminExpiresAt || Date.now() > parsed.adminExpiresAt) {
-      localStorage.removeItem(ADMIN_KEY);
-      return null;
-    }
-    return parsed;
-  } catch (e) { return null; }
-}
-
-function clearAdminAuth() {
-  localStorage.removeItem(ADMIN_KEY);
-}
-
+// ── Claim admin (one-time promotion via the admin password) ──
 function openAdminGate() {
   document.getElementById('admin-gate-password').value = '';
   document.getElementById('admin-gate-error').textContent = '';
@@ -1000,14 +1001,15 @@ async function submitAdminGate() {
   errEl.textContent = '';
   if (!password) { errEl.textContent = 'Enter the admin password.'; return; }
   try {
-    const res = await apiFetch('/api/admin/check', {
+    const res = await apiFetch('/api/admin/claim', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ password })
     });
     const data = await res.json();
     if (!res.ok || !data.ok) { errEl.textContent = data.error || 'Incorrect admin password.'; return; }
-    localStorage.setItem(ADMIN_KEY, JSON.stringify({ adminToken: data.adminToken, adminExpiresAt: data.adminExpiresAt }));
+    saveAuthState({ email: data.email, token: data.token, expiresAt: data.expiresAt, isAdmin: true });
     document.getElementById('admin-gate-overlay').style.display = 'none';
+    toast('Admin role added to your account');
     showView('admin');
   } catch (e) {
     errEl.textContent = 'Could not reach the server.';
@@ -1229,6 +1231,7 @@ async function generateUTM() {
     }
   } catch(e) { }
 
+  loadMyLinks();
   btn.disabled = false;
   spinner.classList.remove('visible');
 }
@@ -1288,6 +1291,7 @@ async function generateBatchUTMs() {
     '<div class="data-row-actions"><button class="btn btn--ghost btn--sm" onclick="navigator.clipboard.writeText(\'' + u.replace(/'/g, "\\'") + '\'); toast(\'Copied!\');">Copy</button></div></div>'
   ).join('');
 
+  loadMyLinks();
   btn.disabled = false;
   spinner.classList.remove('visible');
 }
@@ -1638,12 +1642,67 @@ function renderUsers(users) {
     const row = document.createElement('div');
     row.className = 'data-row';
     const isYou = authState && u.email === authState.email;
+    const badge = u.isAdmin ? ' <span class="owner-badge">Admin</span>' : '';
+    const pending = u.mustChangePassword ? '<div class="data-row-sub" style="color:var(--amber);opacity:1;">Temp password - must change on next sign-in</div>' : '';
+    const adminBtn = u.isAdmin
+      ? '<button class="btn btn--ghost btn--sm" onclick="setUserAdmin(\'' + escHtml(u.email) + '\', false)">Remove admin</button>'
+      : '<button class="btn btn--ghost btn--sm" onclick="setUserAdmin(\'' + escHtml(u.email) + '\', true)">Make admin</button>';
     row.innerHTML =
-      '<div><div class="data-row-main">' + escHtml(u.email) + (isYou ? ' (you)' : '') + '</div>' +
-      '<div class="data-row-sub">Added ' + (u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-') + '</div></div>' +
-      '<div class="data-row-actions"><button class="btn btn--sm" style="color:var(--red);border-color:var(--red);" onclick="deleteUser(\'' + escHtml(u.email) + '\')">Remove</button></div>';
+      '<div style="min-width:0;"><div class="data-row-main">' + escHtml(u.email) + (isYou ? ' (you)' : '') + badge + '</div>' +
+      '<div class="data-row-sub">Added ' + (u.createdAt ? new Date(u.createdAt).toLocaleDateString() : '-') + '</div>' + pending + '</div>' +
+      '<div class="data-row-actions">' +
+      adminBtn +
+      '<button class="btn btn--ghost btn--sm" onclick="resetUserPassword(\'' + escHtml(u.email) + '\')">Reset password</button>' +
+      '<button class="btn btn--sm" style="color:var(--red);border-color:var(--red);" onclick="deleteUser(\'' + escHtml(u.email) + '\')">Remove</button></div>';
     el.appendChild(row);
   });
+}
+
+function generateTempPassword() {
+  // readable, unambiguous characters, 10 chars
+  const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKMNPQRSTUVWXYZ23456789';
+  let out = '';
+  const rand = new Uint32Array(10);
+  crypto.getRandomValues(rand);
+  for (let i = 0; i < 10; i++) out += chars[rand[i] % chars.length];
+  return out;
+}
+
+async function resetUserPassword(email) {
+  if (!confirm('Reset the password for ' + email + '? They will be forced to set a new one on their next sign-in.')) return;
+  const temp = generateTempPassword();
+  try {
+    const res = await apiFetch('/api/users', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reset-password', email, password: temp })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { toast(data.error || 'Could not reset password'); return; }
+    try { navigator.clipboard && navigator.clipboard.writeText(temp); } catch(e) {}
+    // prompt() makes the temp password selectable/copyable in every browser
+    prompt('Temp password for ' + email + ' (already copied to your clipboard).\nShare it with them - they will be forced to change it when they sign in:', temp);
+    loadUsers();
+  } catch (e) { toast('Could not reset password'); }
+}
+
+async function setUserAdmin(email, makeAdmin) {
+  const verb = makeAdmin ? 'Give ' + email + ' the admin role?' : 'Remove the admin role from ' + email + '?';
+  if (!confirm(verb)) return;
+  try {
+    const res = await apiFetch('/api/users', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'set-admin', email, isAdmin: makeAdmin })
+    });
+    const data = await res.json();
+    if (!res.ok || !data.ok) { toast(data.error || 'Could not update role'); return; }
+    if (authState && email === authState.email && !makeAdmin) {
+      // Demoted yourself: role change applies on next sign-in (token still carries admin until then)
+      toast('Admin removed from your account - takes full effect at your next sign-in');
+    } else {
+      toast(makeAdmin ? 'Admin role granted' : 'Admin role removed');
+    }
+    loadUsers();
+  } catch (e) { toast('Could not update role'); }
 }
 
 async function addUser() {
@@ -1678,6 +1737,56 @@ async function deleteUser(email) {
     toast('Account removed');
     loadUsers();
   } catch (e) { toast('Could not remove account'); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  MY LINKS — the signed-in user's 10 most recent links
+// ═══════════════════════════════════════════════════════════════
+let myRecentLinks = [];
+
+async function loadMyLinks() {
+  const el = document.getElementById('my-links-table');
+  if (!authState) return;
+  try {
+    const res = await apiFetch('/api/save');
+    if (!res.ok) throw new Error('failed');
+    const data = await res.json();
+    const mine = (data.links || [])
+      .filter(l => (l.createdBy || '').toLowerCase() === authState.email.toLowerCase())
+      .sort((a, b) => new Date(b.savedAt || 0) - new Date(a.savedAt || 0))
+      .slice(0, 10);
+    myRecentLinks = mine;
+    renderMyLinks();
+  } catch (e) {
+    el.innerHTML = '<div class="table-empty">Could not load your links.</div>';
+  }
+}
+
+function renderMyLinks() {
+  const el = document.getElementById('my-links-table');
+  if (!myRecentLinks.length) {
+    el.innerHTML = '<div class="table-empty">Nothing yet - your generated links will show up here.</div>';
+    return;
+  }
+  el.innerHTML = '';
+  myRecentLinks.forEach((lnk, i) => {
+    const row = document.createElement('div');
+    row.className = 'data-row';
+    const displayUrl = lnk.url || '';
+    const label = prettyCampaignLabel(lnk);
+    const when = lnk.savedAt ? new Date(lnk.savedAt).toLocaleDateString() : '';
+    row.innerHTML =
+      '<div style="min-width:0;"><div class="data-row-main">' + escHtml(label) + '</div>' +
+      '<div class="data-row-sub">' + escHtml(displayUrl.slice(0, 80)) + (displayUrl.length > 80 ? '...' : '') +
+      (when ? ' <span style="opacity:0.55;">· ' + when + '</span>' : '') + '</div></div>' +
+      '<div class="data-row-actions"><button class="btn btn--ghost btn--sm" onclick="copyMyLink(' + i + ')">Copy</button></div>';
+    el.appendChild(row);
+  });
+}
+
+function copyMyLink(i) {
+  const url = myRecentLinks[i] && myRecentLinks[i].url;
+  if (url) { try { navigator.clipboard && navigator.clipboard.writeText(url); } catch(e) {} toast('Copied!'); }
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -2111,6 +2220,7 @@ function celebrate(intensity) {
     loadTags();
     loadCampaigns();
     loadPresets();
+    loadMyLinks();
   } else {
     showLoginOverlay();
   }
