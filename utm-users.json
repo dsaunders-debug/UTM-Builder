@@ -27,6 +27,12 @@
       "passwordHash": "c32763e093dff808f26932416e5797d9d052c6b4c2a8aaad3802ee35717282bb",
       "isAdmin": false,
       "createdAt": "2026-07-29T20:32:32.028Z"
+    },
+    {
+      "email": "evilos@strivepharmacy.com",
+      "passwordHash": "1af61e31cdd5a0cd55d1c517dbb1dc4ba3236d03c12f78d8185ff5745f074d2f",
+      "isAdmin": false,
+      "createdAt": "2026-07-29T21:41:02.588Z"
     }
   ]
 }
