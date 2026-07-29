@@ -15,6 +15,12 @@
       "email": "bvillalobos@strivepharmacy.com",
       "passwordHash": "db12afe9248cd8ed07f10d1934ec695436d690890a8a8a552466e5487da63a36",
       "createdAt": "2026-07-24T20:01:06.620Z"
+    },
+    {
+      "email": "jen.walker@strivepharmacy.com",
+      "passwordHash": "e2886ffa187d785a319a34f5a1e6282371cf950e97c1dcf2e881c04dda11a24e",
+      "isAdmin": false,
+      "createdAt": "2026-07-29T20:23:22.653Z"
     }
   ]
 }
