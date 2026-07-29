@@ -21,6 +21,12 @@
       "passwordHash": "e2886ffa187d785a319a34f5a1e6282371cf950e97c1dcf2e881c04dda11a24e",
       "isAdmin": false,
       "createdAt": "2026-07-29T20:23:22.653Z"
+    },
+    {
+      "email": "pwilliams@strivepharmacy.com",
+      "passwordHash": "c32763e093dff808f26932416e5797d9d052c6b4c2a8aaad3802ee35717282bb",
+      "isAdmin": false,
+      "createdAt": "2026-07-29T20:32:32.028Z"
     }
   ]
 }
