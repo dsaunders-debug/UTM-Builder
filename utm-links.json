@@ -831,12 +831,25 @@
     "source": "paid_social",
     "medium": "facebook",
     "campaign": "45449001-Webinar%20%7C%20Sports%20Medicine%20Essentials%3A%20A%20Provider%E2%80%99s%20Guide%20to%20Performance%20%26%20Recovery",
-    "campaignName": "Webinar | Sports Medicine Essentials: A Provider’s Guide to Performance & Recovery",
+    "campaignName": "Webinar | Sports Medicine Essentials: A Providerâs Guide to Performance & Recovery",
     "content": "video-feed-Strive_AssetLibrary_StriveSession_SportsPharmacy_Teaser.mp4",
     "createdBy": "evilos@strivepharmacy.com",
     "baseUrl": "https://www.strivepharmacy.com/webinars/sports-medicine-essentials-a-providers-guide-to-performance-recovery",
     "ts": 1785367178363,
     "sessionKey": "5kj581vb69d",
     "savedAt": "2026-07-29T23:19:38.688Z"
+  },
+  {
+    "url": "https://www.strivepharmacy.com/webinars/navigate-modern-thyroid-care-with-confidence?utm_source=email_marketing&utm_medium=email&utm_content=email&utm_campaign=49072174-Webinar%20%7C%20Navigate%20Modern%20Thyroid%20Care%20with%20Confidence",
+    "source": "email_marketing",
+    "medium": "email",
+    "campaign": "49072174-Webinar%20%7C%20Navigate%20Modern%20Thyroid%20Care%20with%20Confidence",
+    "campaignName": "Webinar | Navigate Modern Thyroid Care with Confidence",
+    "content": "email",
+    "createdBy": "cstone@strivepharmacy.com",
+    "baseUrl": "https://www.strivepharmacy.com/webinars/navigate-modern-thyroid-care-with-confidence",
+    "ts": 1785538638946,
+    "sessionKey": "2e9rwt54sp6",
+    "savedAt": "2026-07-31T22:57:19.971Z"
   }
 ]
