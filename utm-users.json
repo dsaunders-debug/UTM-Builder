@@ -33,6 +33,12 @@
       "passwordHash": "1af61e31cdd5a0cd55d1c517dbb1dc4ba3236d03c12f78d8185ff5745f074d2f",
       "isAdmin": false,
       "createdAt": "2026-07-29T21:41:02.588Z"
+    },
+    {
+      "email": "tyler@strivepharmacy.com",
+      "passwordHash": "ea1c712775e8cf9db73b22b94fe41af9eaad0941df0329842ba462aa3718d72b",
+      "isAdmin": false,
+      "createdAt": "2026-08-03T17:15:45.944Z"
     }
   ]
 }
