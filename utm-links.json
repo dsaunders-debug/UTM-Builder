@@ -831,7 +831,7 @@
     "source": "paid_social",
     "medium": "facebook",
     "campaign": "45449001-Webinar%20%7C%20Sports%20Medicine%20Essentials%3A%20A%20Provider%E2%80%99s%20Guide%20to%20Performance%20%26%20Recovery",
-    "campaignName": "Webinar | Sports Medicine Essentials: A ProviderÃ¢ÂÂs Guide to Performance & Recovery",
+    "campaignName": "Webinar | Sports Medicine Essentials: A ProviderÃÂ¢ÃÂÃÂs Guide to Performance & Recovery",
     "content": "video-feed-Strive_AssetLibrary_StriveSession_SportsPharmacy_Teaser.mp4",
     "createdBy": "evilos@strivepharmacy.com",
     "baseUrl": "https://www.strivepharmacy.com/webinars/sports-medicine-essentials-a-providers-guide-to-performance-recovery",
@@ -864,5 +864,18 @@
     "ts": 1785539125718,
     "sessionKey": "l9du7t01ai9",
     "savedAt": "2026-07-31T23:05:26.081Z"
+  },
+  {
+    "url": "https://www.strivepharmacy.com/blog/press-release-strive-pharmacy-launches-hydrate-plus?utm_source=organic_social&utm_medium=gbp&utm_content=image-feed&utm_campaign=49404700-Hydrate",
+    "source": "organic_social",
+    "medium": "gbp",
+    "campaign": "49404700-Hydrate",
+    "campaignName": "Hydrate",
+    "content": "image-feed",
+    "createdBy": "tyler@strivepharmacy.com",
+    "baseUrl": "https://www.strivepharmacy.com/blog/press-release-strive-pharmacy-launches-hydrate-plus",
+    "ts": 1785777458808,
+    "sessionKey": "sxld3yvnfq",
+    "savedAt": "2026-08-03T17:17:39.352Z"
   }
 ]
