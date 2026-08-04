@@ -39,6 +39,12 @@
       "passwordHash": "ea1c712775e8cf9db73b22b94fe41af9eaad0941df0329842ba462aa3718d72b",
       "isAdmin": false,
       "createdAt": "2026-08-03T17:15:45.944Z"
+    },
+    {
+      "email": "lbreinholt@strivepharmacy.com",
+      "passwordHash": "1b5a832b228215bc3c0eb7e86eb05b314b77d640db54b8326ebbbd7887895f09",
+      "isAdmin": false,
+      "createdAt": "2026-08-04T23:04:17.922Z"
     }
   ]
 }
