@@ -831,7 +831,7 @@
     "source": "paid_social",
     "medium": "facebook",
     "campaign": "45449001-Webinar%20%7C%20Sports%20Medicine%20Essentials%3A%20A%20Provider%E2%80%99s%20Guide%20to%20Performance%20%26%20Recovery",
-    "campaignName": "Webinar | Sports Medicine Essentials: A ProviderÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂs Guide to Performance & Recovery",
+    "campaignName": "Webinar | Sports Medicine Essentials: A ProviderÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂs Guide to Performance & Recovery",
     "content": "video-feed-Strive_AssetLibrary_StriveSession_SportsPharmacy_Teaser.mp4",
     "createdBy": "evilos@strivepharmacy.com",
     "baseUrl": "https://www.strivepharmacy.com/webinars/sports-medicine-essentials-a-providers-guide-to-performance-recovery",
@@ -879,15 +879,15 @@
     "savedAt": "2026-08-03T17:18:35.656Z"
   },
   {
-    "url": "https://www.strivepharmacy.com/webinars/sports-medicine-essentials-a-providers-guide-to-performance-recovery?utm_source=organic_social&utm_medium=linkedin&utm_content=video-feed-sports_medicineteaser",
+    "url": "https://www.strivepharmacy.com/webinars/sports-medicine-essentials-a-providers-guide-to-performance-recovery?utm_source=organic_social&utm_medium=facebook&utm_content=video-feed-sports_medicineteaser",
     "source": "organic_social",
-    "medium": "linkedin",
+    "medium": "facebook",
     "campaign": "",
     "content": "video-feed-sports_medicineteaser",
     "createdBy": "lbreinholt@strivepharmacy.com",
     "baseUrl": "https://www.strivepharmacy.com/webinars/sports-medicine-essentials-a-providers-guide-to-performance-recovery",
-    "ts": 1785884736632,
+    "ts": 1785884796113,
     "sessionKey": "v5njrew8em",
-    "savedAt": "2026-08-04T23:05:38.684Z"
+    "savedAt": "2026-08-04T23:06:36.665Z"
   }
 ]
