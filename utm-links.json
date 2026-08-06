@@ -831,7 +831,7 @@
     "source": "paid_social",
     "medium": "facebook",
     "campaign": "45449001-Webinar%20%7C%20Sports%20Medicine%20Essentials%3A%20A%20Provider%E2%80%99s%20Guide%20to%20Performance%20%26%20Recovery",
-    "campaignName": "Webinar | Sports Medicine Essentials: A ProviderÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂs Guide to Performance & Recovery",
+    "campaignName": "Webinar | Sports Medicine Essentials: A ProviderÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¢ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂs Guide to Performance & Recovery",
     "content": "video-feed-Strive_AssetLibrary_StriveSession_SportsPharmacy_Teaser.mp4",
     "createdBy": "evilos@strivepharmacy.com",
     "baseUrl": "https://www.strivepharmacy.com/webinars/sports-medicine-essentials-a-providers-guide-to-performance-recovery",
@@ -889,5 +889,18 @@
     "ts": 1785884872129,
     "sessionKey": "v5njrew8em",
     "savedAt": "2026-08-04T23:07:52.440Z"
+  },
+  {
+    "url": "https://www.youtube.com/watch?v=7oe3vubDlS0&utm_source=email_marketing&utm_medium=email&utm_content=email&utm_campaign=49072174-Webinar%20%7C%20Navigate%20Modern%20Thyroid%20Care%20with%20Confidence",
+    "source": "email_marketing",
+    "medium": "email",
+    "campaign": "49072174-Webinar%20%7C%20Navigate%20Modern%20Thyroid%20Care%20with%20Confidence",
+    "campaignName": "Webinar | Navigate Modern Thyroid Care with Confidence",
+    "content": "email",
+    "createdBy": "cstone@strivepharmacy.com",
+    "baseUrl": "https://www.youtube.com/watch?v=7oe3vubDlS0",
+    "ts": 1786036167148,
+    "sessionKey": "kne5qf9ct5",
+    "savedAt": "2026-08-06T17:09:27.662Z"
   }
 ]
