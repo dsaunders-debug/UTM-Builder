@@ -24,10 +24,11 @@
     },
     {
       "email": "pwilliams@strivepharmacy.com",
-      "passwordHash": "c32763e093dff808f26932416e5797d9d052c6b4c2a8aaad3802ee35717282bb",
+      "passwordHash": "51ea26329666f6c6618bd759b3352d9b8ff961702b6efd9f19715db3efcbc4ec",
       "isAdmin": true,
       "createdAt": "2026-07-29T20:32:32.028Z",
-      "updatedAt": "2026-08-14T18:24:31.130Z"
+      "updatedAt": "2026-09-21T19:40:22.944Z",
+      "mustChangePassword": true
     },
     {
       "email": "evilos@strivepharmacy.com",
