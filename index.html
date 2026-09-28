@@ -1152,7 +1152,7 @@ function renderCampaignList(list) {
     const btn = document.createElement('button');
     btn.className = 'camp-item' + (form.campaign === c.utmVal ? ' selected' : '');
     btn.dataset.utm = c.utmVal;
-    btn.innerHTML = '<span><div class="camp-item-name">' + escHtml(c.name) + '</div><div class="camp-item-slug">' + escHtml(c.utmVal) + '</div></span><span class="camp-tag active">Active</span>';
+    btn.innerHTML = '<span><div class="camp-item-name">' + escHtml(c.name) + '</div><div class="camp-item-slug">' + escHtml(c.utmVal) + '</div></span>';
     btn.onclick = () => selectCampaign(c.utmVal, c.name, btn);
     el.appendChild(btn);
   });
