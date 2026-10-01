@@ -44,11 +44,11 @@
     },
     {
       "email": "lbreinholt@strivepharmacy.com",
-      "passwordHash": "30a557e302c002da3672463aea8780f16b268752bceefd535100f9f9fd45fd0a",
+      "passwordHash": "1b5a832b228215bc3c0eb7e86eb05b314b77d640db54b8326ebbbd7887895f09",
       "isAdmin": false,
       "createdAt": "2026-08-04T23:04:17.922Z",
-      "mustChangePassword": true,
-      "updatedAt": "2026-09-29T21:45:05.171Z"
+      "mustChangePassword": false,
+      "updatedAt": "2026-10-01T19:12:28.631Z"
     }
   ]
 }
