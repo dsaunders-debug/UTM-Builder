@@ -49,6 +49,12 @@
       "createdAt": "2026-08-04T23:04:17.922Z",
       "mustChangePassword": false,
       "updatedAt": "2026-10-01T19:12:28.631Z"
+    },
+    {
+      "email": "kfahsbender@strivepharmacy.com",
+      "passwordHash": "e81e194b442c3cccb92349447ec724f99dd2912992a412d5cbeaca8dd2d7e131",
+      "isAdmin": false,
+      "createdAt": "2026-10-12T19:30:36.546Z"
     }
   ]
 }
